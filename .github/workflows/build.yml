@@ -1,0 +1,52 @@
+name: Build FK2Play APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Cache NDK r17c + FFmpeg
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/android-ndk-r17c
+            ffmpeg-android
+          key: ndk-r17c-ffmpeg-n4.4.4-v1
+
+      - name: NDK r17c (dernier NDK compatible Android 4.0.4 / API 15)
+        run: |
+          if [ ! -d ~/android-ndk-r17c ]; then
+            curl -sSL -o ndk.zip https://dl.google.com/android/repository/android-ndk-r17c-linux-x86_64.zip
+            unzip -q ndk.zip -d ~ && rm ndk.zip
+          fi
+
+      - name: FFmpeg + libfk2video.so
+        run: NDK=~/android-ndk-r17c ./scripts/build_native.sh
+
+      - name: Tests du protocole (Java pur)
+        run: ./scripts/run_protocol_tests.sh
+
+      - name: APK
+        run: gradle :app:assembleRelease --no-daemon
+
+      - name: Publier l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: FK2Play-apk
+          path: app/build/outputs/apk/release/*.apk

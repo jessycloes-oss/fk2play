@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Signature de publication : lue dans keystore.properties (jamais publie sur GitHub).
+// Sans ce fichier (ex. GitHub Actions), l'APK est signe avec la cle de debug.
+def ksFile = rootProject.file('keystore.properties')
+def ks = new Properties()
+if (ksFile.exists()) ks.load(new FileInputStream(ksFile))
+
+android {
+    namespace 'com.fk2play'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.fk2play"
+        // Honda Connect (Civic FK2, 2015-2017) = Android 4.0.4 = API 15
+        minSdk 15
+        // Cible basse volontaire : pas de permissions a l'execution ni de contraintes recentes
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 22
+        versionCode 2
+        versionName "1.1-beta"
+        ndk { abiFilters 'armeabi-v7a' }
+    }
+
+    sourceSets {
+        main {
+            // Bibliotheques natives produites par ndk-build (voir scripts/build_native.sh)
+            jniLibs.srcDirs = ['src/main/libs']
+            jni.srcDirs = []
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (ksFile.exists()) {
+                storeFile rootProject.file(ks['storeFile'])
+                storePassword ks['storePassword']
+                keyAlias ks['keyAlias']
+                keyPassword ks['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig ksFile.exists() ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}

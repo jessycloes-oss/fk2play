@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FK2Play</string>
+    <string name="settings">Reglages FK2Play</string>
+    <string name="starting">Demarrage...</string>
+
+    <string-array name="resolution_labels">
+        <item>800 x 480 (ecran natif, recommande)</item>
+        <item>640 x 384 (plus fluide)</item>
+        <item>480 x 288 (secours, tres fluide)</item>
+    </string-array>
+    <string-array name="resolution_values">
+        <item>800x480</item>
+        <item>640x384</item>
+        <item>480x288</item>
+    </string-array>
+    <string-array name="fps_labels">
+        <item>30 images/s</item>
+        <item>25 images/s</item>
+        <item>20 images/s</item>
+        <item>15 images/s</item>
+    </string-array>
+    <string-array name="fps_values">
+        <item>30</item>
+        <item>25</item>
+        <item>20</item>
+        <item>15</item>
+    </string-array>
+</resources>

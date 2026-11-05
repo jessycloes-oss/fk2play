@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Video">
+        <ListPreference
+            android:key="resolution"
+            android:title="Resolution demandee a l'iPhone"
+            android:summary="Baisser si l'image saccade"
+            android:defaultValue="800x480"
+            android:entries="@array/resolution_labels"
+            android:entryValues="@array/resolution_values" />
+        <ListPreference
+            android:key="fps"
+            android:title="Images par seconde"
+            android:defaultValue="30"
+            android:entries="@array/fps_labels"
+            android:entryValues="@array/fps_values" />
+        <CheckBoxPreference
+            android:key="night_mode"
+            android:title="Mode nuit CarPlay"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Audio">
+        <CheckBoxPreference
+            android:key="audio_usb"
+            android:title="Son CarPlay via l'autoradio (USB)"
+            android:summary="Decocher pour laisser le son passer en Bluetooth"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="car_mic"
+            android:title="Utiliser le micro de la voiture"
+            android:summary="Decocher si votre dongle a un micro integre"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Connexion">
+        <CheckBoxPreference
+            android:key="wifi_5g"
+            android:title="Wi-Fi 5 GHz (sans fil)"
+            android:summary="Decocher pour 2,4 GHz en cas de coupures"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="right_hand_drive"
+            android:title="Conduite a droite (UK)"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,21 @@
+# Compilation
+build/
+app/build/
+.gradle/
+local.properties
+build-ffmpeg/
+ffmpeg-android/
+app/src/main/obj/
+app/src/main/libs/
+sim-out/
+*.apk
+
+# Signature : NE JAMAIS PUBLIER
+keystore.properties
+*.jks
+*.keystore
+
+# Divers
+.idea/
+*.iml
+.DS_Store

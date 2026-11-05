@@ -1,0 +1,82 @@
+name: "Rapport de test / Test report"
+description: "J'ai essayé FK2Play dans ma voiture (réussi ou non) / I tried FK2Play in my car"
+title: "[Test] <modèle de voiture> – <version RC> – <résultat>"
+labels: ["rapport de test"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci ! Chaque essai, même raté, fait avancer le projet. Une photo de la fiche de résultats
+        (dernière page du mode d'emploi) peut remplacer une partie des champs.
+        Thanks! Every test, even a failed one, helps. English answers are welcome.
+  - type: input
+    id: voiture
+    attributes:
+      label: "Voiture (modèle, année) / Car (model, year)"
+      placeholder: "Honda Civic Type R FK2 2016"
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: "Numéro de build (Réglages → Android → À propos) / Build number"
+      placeholder: "09.08C.00.1123"
+    validations:
+      required: true
+  - type: input
+    id: mainsoft
+    attributes:
+      label: "Main Soft (menu diagnostic), si connu / if known"
+      placeholder: "31.00.cf"
+  - type: dropdown
+    id: install
+    attributes:
+      label: "Installation de FK2Play / Install"
+      options:
+        - "Installé sans problème / Installed fine"
+        - "Installé après réinitialisation usine / After factory reset"
+        - "Impossible à installer / Could not install"
+    validations:
+      required: true
+  - type: input
+    id: diag_sans
+    attributes:
+      label: "Ligne de diagnostic SANS dongle / Diagnostic line WITHOUT dongle"
+      placeholder: "[USB hote Android : oui | aucun peripherique vu]"
+  - type: input
+    id: diag_avec
+    attributes:
+      label: "Ligne de diagnostic / messages AVEC dongle / WITH dongle"
+      placeholder: "Dongle initialise... / vus : 1314:1521"
+    validations:
+      required: true
+  - type: input
+    id: dongle
+    attributes:
+      label: "Dongle (modèle exact, message « Firmware dongle »)"
+      placeholder: "Carlinkit CPC200-CCPA, 2025.02.25.1521CAY"
+  - type: checkboxes
+    id: fonctions
+    attributes:
+      label: "Ce qui fonctionne / What works"
+      options:
+        - label: "CarPlay s'affiche / CarPlay shows up"
+        - label: "Image fluide / Smooth video"
+        - label: "Tactile précis / Touch accurate"
+        - label: "Musique / Music"
+        - label: "Voix du GPS / Navigation voice"
+        - label: "Siri m'entend / Siri hears me"
+        - label: "Appels téléphoniques / Phone calls"
+        - label: "Touches du volant / Steering wheel buttons"
+        - label: "Caméra de recul OK / Reverse camera still OK"
+  - type: textarea
+    id: details
+    attributes:
+      label: "Détails, messages d'erreur exacts, photos / Details, exact errors, photos"
+  - type: checkboxes
+    id: securite
+    attributes:
+      label: "Sécurité / Safety"
+      options:
+        - label: "J'ai fait le test à l'arrêt / I tested while parked"
+          required: true
