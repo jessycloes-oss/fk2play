@@ -36,6 +36,12 @@ jobs:
             unzip -q ndk.zip -d ~ && rm ndk.zip
           fi
 
+      - name: libtinfo.so.5 (exigee par le clang du NDK r17c)
+        run: |
+          if [ ! -e /usr/lib/x86_64-linux-gnu/libtinfo.so.5 ]; then
+            sudo ln -sf /usr/lib/x86_64-linux-gnu/libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5
+          fi
+
       - name: FFmpeg + libfk2video.so
         run: NDK=~/android-ndk-r17c ./scripts/build_native.sh
 
