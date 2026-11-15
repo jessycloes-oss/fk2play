@@ -19,8 +19,8 @@ android {
         // Cible basse volontaire : pas de permissions a l'execution ni de contraintes recentes
         //noinspection ExpiredTargetSdkVersion
         targetSdk 22
-        versionCode 5
-        versionName "1.4-beta"
+        versionCode 6
+        versionName "1.5-beta"
         ndk { abiFilters 'armeabi-v7a' }
     }
 

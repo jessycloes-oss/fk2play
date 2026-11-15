@@ -33,7 +33,7 @@ Dernière pré-version : page [**Releases**](../../releases).
 | Fichier | Usage |
 |---|---|
 | `HondaAppCenter_A1.apk` | FK2Play **déjà renommé** pour l'installateur du Honda Connect : à copier tel quel à la racine d'une clé USB FAT32. |
-| `FK2Play-1.4-beta.apk` | Le même fichier sous son vrai nom. |
+| `FK2Play-1.5-beta.apk` | Le même fichier sous son vrai nom. |
 | `Mode_emploi_FK2Play_toutes_versions.pdf` | Mode d'emploi pour toutes les versions RC (RC3 à RC8). |
 | `Mode_emploi_FK2Play_RC3.pdf` | Mode d'emploi illustré, réservé aux Honda Connect **RC3** (build `09.08C.00.xxxx`). |
 
@@ -75,6 +75,10 @@ par le **kit mains libres d'origine** : cochez *Réglages FK2Play → Appels via
 et laissez l'iPhone connecté à HandsFreeLink. La musique reste en USB, et les appels utilisent le micro
 et les touches du volant d'origine (validé en voiture en mode « tout Bluetooth » ; mode mixte de la
 1.4 à confirmer). Autre solution : un dongle **CCPA-MIC** (micro intégré).
+
+**Arrière-plan** (1.5) : quitter l'écran CarPlay ne coupe plus rien. Musique, appels et connexion
+continuent pendant que vous utilisez les réglages ou une autre appli ; l'icône FK2Play (ou sa
+notification) ramène l'image. Vérifié en émulateur, à confirmer en voiture.
 
 **Pas encore vérifié** :
 - les versions RC5 à RC8 et les autres modèles (HR-V, CR-V, Jazz…) ;

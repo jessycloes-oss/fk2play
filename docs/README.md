@@ -1,4 +1,4 @@
-# Modes d'emploi FK2Play 1.4-beta
+# Modes d'emploi FK2Play 1.5-beta
 
 > [!WARNING]
 > **Bêta.** Premier essai réel réussi (Civic Type R FK2, RC3). Vos retours sont nécessaires : [rapport de test](../../../issues/new?template=rapport-de-test.yml).

@@ -1,5 +1,22 @@
 # Historique des versions
 
+## 1.5-beta — 15 novembre 2026 (CarPlay en arrière-plan)
+
+Retour d'essai : quitter l'écran CarPlay (pour aller dans les réglages par exemple) coupait
+FK2Play ; environ 20 s plus tard, FK2Play se rouvrait de force et fermait l'appli en cours.
+Cause : la session avec le dongle était fermée en quittant l'écran ; privé de battement de cœur,
+le dongle redémarrait et son rebranchement USB relançait FK2Play.
+
+- **CarPlay continue en arrière-plan** : la connexion au dongle vit maintenant dans un service
+  Android au premier plan (`CarPlayService`). Musique, appels, Siri et battement de cœur continuent
+  pendant que l'on navigue dans le Honda Connect ; seule l'image est mise en pause. Au retour
+  (icône FK2Play ou notification), l'image revient immédiatement, sans reconnexion.
+- Les réglages qui doivent être envoyés au dongle (résolution, images/s, mode nuit, Wi-Fi, micro,
+  son USB) déclenchent une reconnexion de quelques secondes au retour dans FK2Play ; les autres
+  s'appliquent tout de suite.
+- Si le dongle est débranché pendant que FK2Play est en arrière-plan, le service s'arrête ; le
+  rebranchement relance FK2Play comme avant.
+
 ## 1.4-beta — 15 novembre 2026 (appels par le kit mains libres d'origine)
 
 Sur la Civic Type R FK2 testée, le micro de la voiture n'est pas accessible aux applis Android

@@ -43,6 +43,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Garde CarPlay actif quand on quitte l'ecran FK2Play (reglages, radio...) -->
+        <service
+            android:name=".CarPlayService"
+            android:exported="false" />
+
         <activity
             android:name=".MicTestActivity"
             android:exported="false"
