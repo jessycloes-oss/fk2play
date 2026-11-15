@@ -1,7 +1,7 @@
-# Modes d'emploi FK2Play 1.1-beta
+# Modes d'emploi FK2Play 1.2-beta
 
 > [!WARNING]
-> **Bêta, jamais testée en voiture.** Vos retours sont nécessaires : [rapport de test](../../../issues/new?template=rapport-de-test.yml).
+> **Bêta.** Premier essai réel réussi (Civic Type R FK2, RC3). Vos retours sont nécessaires : [rapport de test](../../../issues/new?template=rapport-de-test.yml).
 
 | Guide | Pour qui |
 |---|---|
@@ -17,7 +17,7 @@
 2. **Honda Permissions** (S_Mike, forum XDA, non fourni ici) : le renommer `HondaAppCenter_A1.apk`, le copier à la racine d'une clé USB FAT32, l'installer avec l'installateur d'APK du Honda Connect. En cas d'échec : réinitialisation usine d'Android puis nouvel essai.
 3. **Débloquer** : Honda Permissions → *Allowed Installations* → appui long sur `HondaAppCenter_A1.apk` → crayon → *Sig digest sha256* = `PREINSTALL`.
 4. **Installer FK2Play** : copier `HondaAppCenter_A1.apk` de la [release](../../../releases) sur la clé (seul fichier) et l'installer de la même façon.
-5. **Droits** : Honda Permissions → *Process Controls* → `+` : Process/Package `com.fk2play`, Auth Type `THIRD_PARTY`, App Type `NAVI`, SoundOut / SoundInterrupt / SoundInterruptMute / LastMode **ON**, ProcessKillTarget **OFF**.
+5. **Droits** : Honda Permissions → *Process Controls* → `+` : Process/Package `com.fk2play`, Auth Type `THIRD_PARTY`, App Type `NAVI`, SoundOut / LastMode **ON** ; SoundInterrupt / SoundInterruptMute / ProcessKillTarget **OFF** (sinon le volume du volant ne répond plus).
 6. **Test sans dongle** : lancer FK2Play et lire la ligne de diagnostic.
 
    ![Diagnostic](images/diagnostic.png)

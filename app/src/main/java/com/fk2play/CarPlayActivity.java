@@ -51,6 +51,10 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     private MicInput mic;
     private DongleConfig config;
     private volatile boolean resumed;
+    /** Des images CarPlay arrivent : aucun message ne doit couvrir l'ecran. */
+    private volatile boolean videoActive;
+    /** Message permanent a reafficher apres un message passager (null = ecran libre). */
+    private String baseStatus;
     private boolean permissionPending;
     /** Une ouverture de session est en cours (evite deux connexions paralleles). */
     private boolean connecting;
@@ -178,6 +182,7 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
 
     private synchronized void disconnect() {
         ui.removeCallbacks(retry);
+        videoActive = false;
         if (mic != null) { mic.stop(); mic = null; }
         if (session != null) { session.stop(); session = null; }
         audio.stopAll();
@@ -287,18 +292,31 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
 
     @Override
     public void onPhoneConnected(int phoneType, boolean wireless) {
-        setStatus(phoneType == 3 ? "CarPlay connecte" + (wireless ? " (sans fil)" : "") : "Telephone connecte");
-        hideStatusSoon();
+        String s = phoneType == 3 ? "CarPlay connecte" + (wireless ? " (sans fil)" : "") : "Telephone connecte";
+        baseStatus = null;            // plus de message permanent : CarPlay occupe l'ecran
+        showInfo(s, true);
     }
 
     @Override
     public void onPhoneDisconnected() {
         audio.stopAll();
+        videoActive = false;
         setStatus("iPhone deconnecte - en attente...");
     }
 
     @Override
     public void onVideo(int w, int h, byte[] data, int off, int len) {
+        if (!videoActive) {
+            // Premiere image CarPlay : on libere l'ecran de tout message.
+            videoActive = true;
+            ui.post(new Runnable() {
+                public void run() {
+                    baseStatus = null;
+                    ui.removeCallbacks(restoreStatus);
+                    status.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
         video.submit(w, h, data, off, len);
     }
 
@@ -326,12 +344,16 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
 
     @Override
     public void onStatus(String message) {
-        setStatus(message);
+        // Messages d'information du dongle (phase, firmware...) : jamais par-dessus CarPlay.
+        android.util.Log.i("FK2Play", message);
+        if (message.startsWith("Dongle initialise")) setStatus(message);
+        else showInfo(message, false);
     }
 
     @Override
     public void onError(Exception e) {
         android.util.Log.w("FK2Play", "Erreur session", e);
+        videoActive = false;
         setStatus("Erreur : " + e.getMessage() + " - nouvelle tentative...");
         ui.post(new Runnable() {
             public void run() {
@@ -355,20 +377,44 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
 
     // ---------------------------------------------------------------- Utilitaires
 
+    /** Message permanent (attente, erreur, diagnostic) : reste affiche jusqu'au suivant. */
     private void setStatus(final String s) {
         ui.post(new Runnable() {
             public void run() {
+                baseStatus = s;
+                ui.removeCallbacks(restoreStatus);
                 status.setText(s);
                 status.setVisibility(View.VISIBLE);
             }
         });
     }
 
-    private void hideStatusSoon() {
-        ui.postDelayed(new Runnable() {
-            public void run() { status.setVisibility(View.INVISIBLE); }
-        }, 3000);
+    /**
+     * Message passager : affiche 3 s puis retour au message permanent (ou rien).
+     * Ignore pendant que CarPlay s'affiche, sauf si force (ex. « CarPlay connecte »).
+     */
+    private void showInfo(final String s, final boolean force) {
+        ui.post(new Runnable() {
+            public void run() {
+                if (videoActive && !force) return;
+                status.setText(s);
+                status.setVisibility(View.VISIBLE);
+                ui.removeCallbacks(restoreStatus);
+                ui.postDelayed(restoreStatus, 3000);
+            }
+        });
     }
+
+    private final Runnable restoreStatus = new Runnable() {
+        public void run() {
+            if (baseStatus != null && !videoActive) {
+                status.setText(baseStatus);
+                status.setVisibility(View.VISIBLE);
+            } else {
+                status.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
 
     private DongleConfig loadConfig() {
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
