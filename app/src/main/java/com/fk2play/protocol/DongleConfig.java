@@ -16,5 +16,11 @@ public class DongleConfig {
     public boolean useCarMic = true;
     /** true = audio CarPlay renvoye par USB et joue par l'application. */
     public boolean audioOverUsb = true;
+    /**
+     * Appels via le kit mains libres d'origine (HandsFreeLink) : musique par USB, et au debut
+     * d'un appel le dongle bascule le son en Bluetooth pour que la voiture prenne l'appel avec
+     * son propre micro. Utile quand le micro de la voiture est inaccessible aux applis (Honda Connect).
+     */
+    public boolean callsViaCarBluetooth = false;
     public int mediaDelayMs = 300;
 }

@@ -21,6 +21,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Audio">
         <CheckBoxPreference
+            android:key="calls_car_bt"
+            android:title="Appels via le Bluetooth de la voiture"
+            android:summary="Musique par USB, appels par le kit mains libres d'origine (micro et touches du volant). L'iPhone doit rester connecte a HandsFreeLink."
+            android:defaultValue="false" />
+        <CheckBoxPreference
             android:key="audio_usb"
             android:title="Son CarPlay via l'autoradio (USB)"
             android:summary="Decocher pour laisser le son passer en Bluetooth"

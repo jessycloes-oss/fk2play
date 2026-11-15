@@ -55,6 +55,8 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     private volatile boolean videoActive;
     /** Appel en cours (d'apres les commandes audio du dongle) : la touche telephone raccroche. */
     private volatile boolean inCall;
+    /** L'appel en cours a ete bascule sur le Bluetooth de la voiture. */
+    private volatile boolean callOnCarBluetooth;
     /** Reglage de diagnostic : afficher le code des touches inconnues. */
     private boolean showKeyCodes;
     /** Message permanent a reafficher apres un message passager (null = ecran libre). */
@@ -187,6 +189,8 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     private synchronized void disconnect() {
         ui.removeCallbacks(retry);
         videoActive = false;
+        inCall = false;
+        callOnCarBluetooth = false;
         if (mic != null) { mic.stop(); mic = null; }
         if (session != null) { session.stop(); session = null; }
         audio.stopAll();
@@ -276,6 +280,12 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
             return true;
         }
         DongleSession s = session;
+        // Honda Connect : la touche « raccrocher » du volant arrive comme RETOUR (code 4).
+        // Pendant un appel, elle raccroche au lieu de quitter FK2Play.
+        if (keyCode == KeyEvent.KEYCODE_BACK && s != null && inCall) {
+            s.sendCommand(Msg.CMD_REJECT_PHONE);
+            return true;
+        }
         if (s != null) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_MEDIA_NEXT: s.sendCommand(Msg.CMD_NEXT); return true;
@@ -348,11 +358,24 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
         switch (cmd) {
             case Msg.AUDIO_PHONECALL_START:
                 inCall = true;
-                if (config.useCarMic && m != null) m.start();
+                if (config.callsViaCarBluetooth && config.audioOverUsb) {
+                    // L'appel part sur le Bluetooth de la voiture (micro et touches d'origine).
+                    // Au retour dans FK2Play, la reconnexion repasse le son en USB.
+                    DongleSession s = session;
+                    if (s != null) s.sendCommand(Msg.CMD_AUDIO_TRANSFER_ON);
+                    callOnCarBluetooth = true;
+                } else if (config.useCarMic && m != null) {
+                    m.start();
+                }
                 break;
             case Msg.AUDIO_PHONECALL_STOP:
                 inCall = false;
                 if (m != null) m.stop();
+                if (callOnCarBluetooth) {
+                    callOnCarBluetooth = false;
+                    DongleSession s = session;
+                    if (s != null) s.sendCommand(Msg.CMD_AUDIO_TRANSFER_OFF);
+                }
                 break;
             case Msg.AUDIO_SIRI_START:
                 if (config.useCarMic && m != null) m.start();
@@ -455,6 +478,7 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
         c.wifi5g = p.getBoolean("wifi_5g", true);
         c.useCarMic = p.getBoolean("car_mic", true);
         c.audioOverUsb = p.getBoolean("audio_usb", true);
+        c.callsViaCarBluetooth = p.getBoolean("calls_car_bt", false);
         showKeyCodes = p.getBoolean("show_keycodes", false);
         return c;
     }

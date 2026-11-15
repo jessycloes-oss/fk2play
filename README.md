@@ -33,7 +33,7 @@ Dernière pré-version : page [**Releases**](../../releases).
 | Fichier | Usage |
 |---|---|
 | `HondaAppCenter_A1.apk` | FK2Play **déjà renommé** pour l'installateur du Honda Connect : à copier tel quel à la racine d'une clé USB FAT32. |
-| `FK2Play-1.3-beta.apk` | Le même fichier sous son vrai nom. |
+| `FK2Play-1.4-beta.apk` | Le même fichier sous son vrai nom. |
 | `Mode_emploi_FK2Play_toutes_versions.pdf` | Mode d'emploi pour toutes les versions RC (RC3 à RC8). |
 | `Mode_emploi_FK2Play_RC3.pdf` | Mode d'emploi illustré, réservé aux Honda Connect **RC3** (build `09.08C.00.xxxx`). |
 
@@ -70,10 +70,11 @@ volume au volant fonctionnent (avec SoundInterrupt et SoundInterruptMute sur OFF
 tactile transmis, reconnexion propre après débranchement ou trame corrompue, 17/17 tests du protocole.
 Les 103 fonctions système utilisées par la bibliothèque vidéo existent dans le vrai Android 4.0.4.
 
-**Appels (en cours de mise au point)** : sur la FK2 testée, le son du correspondant passe une fois
-l'iPhone déconnecté du Bluetooth d'origine du Honda (HandsFreeLink). Le micro de la voiture reste à
-valider : utilisez *Réglages FK2Play → Tester le micro de la voiture* et partagez le résultat. Si aucun
-micro n'est accessible, un dongle **CCPA-MIC** (micro intégré) est nécessaire.
+**Appels** : le micro de la Civic n'est pas accessible aux applis Android. Les appels passent donc
+par le **kit mains libres d'origine** : cochez *Réglages FK2Play → Appels via le Bluetooth de la voiture*
+et laissez l'iPhone connecté à HandsFreeLink. La musique reste en USB, et les appels utilisent le micro
+et les touches du volant d'origine (validé en voiture en mode « tout Bluetooth » ; mode mixte de la
+1.4 à confirmer). Autre solution : un dongle **CCPA-MIC** (micro intégré).
 
 **Pas encore vérifié** :
 - les versions RC5 à RC8 et les autres modèles (HR-V, CR-V, Jazz…) ;
@@ -152,4 +153,5 @@ install on the Honda Connect. FK2Play replaces it: it drives the dongle over USB
 - **First test**: launch FK2Play without the dongle and read the bracketed diagnostic line (`USB hote Android : oui/NON`), then plug the dongle directly (no hub). `Dongle initialise...` means the head unit talks to the dongle. Pair the iPhone over Bluetooth with the dongle and accept CarPlay.
 - **Not verified yet**: RC5–RC8 and other models, car microphone (Siri/calls), long trips.
 - **Honda Permissions → Process Controls**: keep SoundInterrupt and SoundInterruptMute **OFF**, otherwise steering-wheel volume stops working.
+- **Phone calls**: the car microphone is not reachable by Android apps. Enable *"Appels via le Bluetooth de la voiture"* and keep the iPhone connected to the Honda's HandsFreeLink: music stays on USB, calls use the original hands-free kit.
 - **License**: MIT; FFmpeg under LGPL 2.1+. Not affiliated with Apple, Honda or Carlinkit.

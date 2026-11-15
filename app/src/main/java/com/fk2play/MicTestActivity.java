@@ -161,7 +161,8 @@ public class MicTestActivity extends Activity {
             e.putBoolean("car_mic", false);
             msg = "\nAUCUN MICRO UTILISABLE : Android ne recoit pas le son du micro de la voiture.\n"
                     + "\"Utiliser le micro de la voiture\" a ete desactive (vous entendrez vos appels).\n"
-                    + "Pour etre entendu, il faut un dongle avec micro integre (Carlinkit CCPA-MIC).\n"
+                    + "Solution conseillee : cochez \"Appels via le Bluetooth de la voiture\" et gardez\n"
+                    + "l'iPhone connecte a HandsFreeLink. Sinon : dongle avec micro (Carlinkit CCPA-MIC).\n"
                     + "Merci d'envoyer une photo de cet ecran.";
         }
         e.commit();

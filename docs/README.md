@@ -1,4 +1,4 @@
-# Modes d'emploi FK2Play 1.3-beta
+# Modes d'emploi FK2Play 1.4-beta
 
 > [!WARNING]
 > **Bêta.** Premier essai réel réussi (Civic Type R FK2, RC3). Vos retours sont nécessaires : [rapport de test](../../../issues/new?template=rapport-de-test.yml).
@@ -23,8 +23,8 @@
    ![Diagnostic](images/diagnostic.png)
 
 7. **Brancher le dongle** directement (pas de hub), accepter l'accès USB. `Dongle initialise...` = réussite.
-8. **iPhone** : si l'iPhone était jumelé au Bluetooth d'origine du Honda, **déconnecte HandsFreeLink** (sinon pas de son pendant les appels). Puis Bluetooth → appareil du dongle → *Utiliser CarPlay*.
-9. **Appels** : Réglages FK2Play → *Tester le micro de la voiture* (parle pendant le test). « Aucun micro utilisable » → il faut un dongle **CCPA-MIC**.
+8. **iPhone** : Bluetooth → appareil du dongle → *Utiliser CarPlay*.
+9. **Appels** (micro de la voiture inaccessible aux applis) : garde l'iPhone **connecté à HandsFreeLink** (Bluetooth d'origine du Honda) et coche *Réglages FK2Play → Appels via le Bluetooth de la voiture*. La musique reste en USB, et le Honda prend les appels avec son micro et les touches du volant. Sans cette option, déconnecte HandsFreeLink, sinon le Honda coupe le son des appels.
 
    ![Connexion (simulation)](images/carplay-connecte-simulation.png)
 

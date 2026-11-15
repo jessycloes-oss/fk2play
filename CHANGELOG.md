@@ -1,5 +1,20 @@
 # Historique des versions
 
+## 1.4-beta — 15 novembre 2026 (appels par le kit mains libres d'origine)
+
+Sur la Civic Type R FK2 testée, le micro de la voiture n'est pas accessible aux applis Android
+(le test du micro ne trouve rien) : il est câblé sur le module Bluetooth du Honda.
+
+- **Nouvelle option « Appels via le Bluetooth de la voiture »** (idée de jessycloes-oss) :
+  la musique et CarPlay restent par USB, et au début de chaque appel FK2Play demande au dongle de
+  basculer le son sur le Bluetooth. La voiture prend alors l'appel avec son kit mains libres
+  d'origine (HandsFreeLink) : micro, haut-parleurs et touches du volant d'origine. À la fin de
+  l'appel, le Honda revient sur FK2Play, qui repasse le son en USB. L'iPhone doit rester
+  connecté à HandsFreeLink.
+- **Touche « raccrocher » du volant** : sur le Honda Connect, elle arrive comme RETOUR
+  (code 4). Pendant un appel géré par FK2Play, elle raccroche au lieu de quitter l'appli.
+- Test du micro : si aucun micro n'est trouvé, il conseille l'option ci-dessus.
+
 ## 1.3-beta — 15 novembre 2026 (appels téléphoniques)
 
 Retours de l'essai sur Civic Type R FK2 (RC3) : le son du correspondant n'arrivait pas, le micro
