@@ -33,7 +33,7 @@ Dernière pré-version : page [**Releases**](../../releases).
 | Fichier | Usage |
 |---|---|
 | `HondaAppCenter_A1.apk` | FK2Play **déjà renommé** pour l'installateur du Honda Connect : à copier tel quel à la racine d'une clé USB FAT32. |
-| `FK2Play-1.2-beta.apk` | Le même fichier sous son vrai nom. |
+| `FK2Play-1.3-beta.apk` | Le même fichier sous son vrai nom. |
 | `Mode_emploi_FK2Play_toutes_versions.pdf` | Mode d'emploi pour toutes les versions RC (RC3 à RC8). |
 | `Mode_emploi_FK2Play_RC3.pdf` | Mode d'emploi illustré, réservé aux Honda Connect **RC3** (build `09.08C.00.xxxx`). |
 
@@ -70,9 +70,13 @@ volume au volant fonctionnent (avec SoundInterrupt et SoundInterruptMute sur OFF
 tactile transmis, reconnexion propre après débranchement ou trame corrompue, 17/17 tests du protocole.
 Les 103 fonctions système utilisées par la bibliothèque vidéo existent dans le vrai Android 4.0.4.
 
+**Appels (en cours de mise au point)** : sur la FK2 testée, le son du correspondant passe une fois
+l'iPhone déconnecté du Bluetooth d'origine du Honda (HandsFreeLink). Le micro de la voiture reste à
+valider : utilisez *Réglages FK2Play → Tester le micro de la voiture* et partagez le résultat. Si aucun
+micro n'est accessible, un dongle **CCPA-MIC** (micro intégré) est nécessaire.
+
 **Pas encore vérifié** :
 - les versions RC5 à RC8 et les autres modèles (HR-V, CR-V, Jazz…) ;
-- l'accès au micro de la voiture pour Siri et les appels ;
 - les longs trajets (stabilité sur la durée, chauffe).
 
 ## Signaler un essai

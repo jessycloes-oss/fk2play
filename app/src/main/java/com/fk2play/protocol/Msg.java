@@ -58,6 +58,9 @@ public final class Msg {
     public static final int CMD_PAUSE = 202;
     public static final int CMD_NEXT = 204;
     public static final int CMD_PREV = 205;
+    public static final int CMD_PLAY_PAUSE = 203;
+    public static final int CMD_ACCEPT_PHONE = 300;  // decrocher
+    public static final int CMD_REJECT_PHONE = 301;  // raccrocher / refuser
     public static final int CMD_WIFI_ENABLE = 1000;
     public static final int CMD_WIFI_CONNECT = 1002;
 

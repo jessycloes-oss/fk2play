@@ -30,10 +30,24 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
+        <!-- Icone separee "Reglages FK2Play" : toujours accessible, meme si la touche MENU
+             est gardee par le Honda Connect. -->
         <activity
             android:name=".SettingsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/settings"
+            android:theme="@android:style/Theme.Holo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MicTestActivity"
+            android:exported="false"
+            android:label="Test du micro"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo" />
     </application>
 </manifest>

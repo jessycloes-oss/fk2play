@@ -30,6 +30,27 @@
             android:title="Utiliser le micro de la voiture"
             android:summary="Decocher si votre dongle a un micro integre"
             android:defaultValue="true" />
+        <Preference
+            android:title="Tester le micro de la voiture"
+            android:summary="Trouve automatiquement le bon reglage (parlez pendant le test)">
+            <intent
+                android:targetPackage="com.fk2play"
+                android:targetClass="com.fk2play.MicTestActivity" />
+        </Preference>
+        <ListPreference
+            android:key="mic_source"
+            android:title="Source du micro"
+            android:summary="Rempli par le test du micro"
+            android:defaultValue="auto"
+            android:entries="@array/mic_source_labels"
+            android:entryValues="@array/mic_source_values" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Diagnostic">
+        <CheckBoxPreference
+            android:key="show_keycodes"
+            android:title="Afficher le code des touches"
+            android:summary="Montre le numero de chaque touche du volant non reconnue"
+            android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Connexion">
         <CheckBoxPreference

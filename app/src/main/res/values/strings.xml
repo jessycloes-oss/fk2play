@@ -26,4 +26,20 @@
         <item>20</item>
         <item>15</item>
     </string-array>
+    <string-array name="mic_source_labels">
+        <item>Automatique</item>
+        <item>MIC</item>
+        <item>VOICE_COMMUNICATION</item>
+        <item>VOICE_RECOGNITION</item>
+        <item>CAMCORDER</item>
+        <item>DEFAULT</item>
+    </string-array>
+    <string-array name="mic_source_values">
+        <item>auto</item>
+        <item>1</item>
+        <item>7</item>
+        <item>6</item>
+        <item>5</item>
+        <item>0</item>
+    </string-array>
 </resources>

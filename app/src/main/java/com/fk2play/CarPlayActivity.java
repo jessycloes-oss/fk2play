@@ -53,6 +53,10 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     private volatile boolean resumed;
     /** Des images CarPlay arrivent : aucun message ne doit couvrir l'ecran. */
     private volatile boolean videoActive;
+    /** Appel en cours (d'apres les commandes audio du dongle) : la touche telephone raccroche. */
+    private volatile boolean inCall;
+    /** Reglage de diagnostic : afficher le code des touches inconnues. */
+    private boolean showKeyCodes;
     /** Message permanent a reafficher apres un message passager (null = ecran libre). */
     private String baseStatus;
     private boolean permissionPending;
@@ -169,7 +173,7 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
                 if (!resumed) { t.close(); return; }
                 session = s;
                 lastSession = s;
-                mic = new MicInput(s);
+                mic = new MicInput(this, s);
             }
             s.start();
         } catch (Exception e) {
@@ -278,13 +282,26 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS: s.sendCommand(Msg.CMD_PREV); return true;
                 case KeyEvent.KEYCODE_MEDIA_PLAY: s.sendCommand(Msg.CMD_PLAY); return true;
                 case KeyEvent.KEYCODE_MEDIA_PAUSE: s.sendCommand(Msg.CMD_PAUSE); return true;
-                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: s.sendCommand(Msg.CMD_PLAY); return true;
+                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                case KeyEvent.KEYCODE_HEADSETHOOK:
+                    // Pendant un appel, la touche du kit mains libres decroche / raccroche.
+                    if (inCall) s.sendCommand(Msg.CMD_REJECT_PHONE);
+                    else s.sendCommand(Msg.CMD_PLAY_PAUSE);
+                    return true;
+                case KeyEvent.KEYCODE_CALL: s.sendCommand(Msg.CMD_ACCEPT_PHONE); return true;
+                case KeyEvent.KEYCODE_ENDCALL: s.sendCommand(Msg.CMD_REJECT_PHONE); return true;
                 case KeyEvent.KEYCODE_SEARCH:
                 case KeyEvent.KEYCODE_VOICE_ASSIST:
                     s.sendCommand(Msg.CMD_SIRI); return true;
                 default: break;
             }
         }
+        if (showKeyCodes) {
+            // Diagnostic : affiche le code des touches que FK2Play ne connait pas encore.
+            android.widget.Toast.makeText(this, "Touche " + keyCode + " (" + KeyEvent.keyCodeToString(keyCode) + ")",
+                    android.widget.Toast.LENGTH_SHORT).show();
+        }
+        android.util.Log.i("FK2Play", "Touche non geree : " + keyCode);
         return super.onKeyDown(keyCode, event);
     }
 
@@ -329,12 +346,18 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     public void onAudioCommand(int cmd) {
         MicInput m = mic;
         switch (cmd) {
-            case Msg.AUDIO_SIRI_START:
             case Msg.AUDIO_PHONECALL_START:
+                inCall = true;
+                if (config.useCarMic && m != null) m.start();
+                break;
+            case Msg.AUDIO_PHONECALL_STOP:
+                inCall = false;
+                if (m != null) m.stop();
+                break;
+            case Msg.AUDIO_SIRI_START:
                 if (config.useCarMic && m != null) m.start();
                 break;
             case Msg.AUDIO_SIRI_STOP:
-            case Msg.AUDIO_PHONECALL_STOP:
                 if (m != null) m.stop();
                 break;
             default:
@@ -354,6 +377,7 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
     public void onError(Exception e) {
         android.util.Log.w("FK2Play", "Erreur session", e);
         videoActive = false;
+        inCall = false;
         setStatus("Erreur : " + e.getMessage() + " - nouvelle tentative...");
         ui.post(new Runnable() {
             public void run() {
@@ -431,6 +455,7 @@ public class CarPlayActivity extends Activity implements DongleListener, Surface
         c.wifi5g = p.getBoolean("wifi_5g", true);
         c.useCarMic = p.getBoolean("car_mic", true);
         c.audioOverUsb = p.getBoolean("audio_usb", true);
+        showKeyCodes = p.getBoolean("show_keycodes", false);
         return c;
     }
 }
