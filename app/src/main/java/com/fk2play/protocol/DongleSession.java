@@ -3,6 +3,7 @@ package com.fk2play.protocol;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayDeque;
 
 /**
  * Pilote une session avec le dongle : sequence d'initialisation, battement de coeur
@@ -20,6 +21,10 @@ public class DongleSession {
     private Thread readerThread;
     private Thread heartbeatThread;
     private Thread closerThread;
+    private Thread writerThread;
+    /** Messages de l'interface (tactile, commandes) envoyes par un thread dedie. */
+    private final ArrayDeque<Msg> outbox = new ArrayDeque<Msg>();
+    private static final int OUTBOX_MAX = 64;
 
     public DongleSession(Transport transport, DongleConfig config, DongleListener listener) {
         this.transport = transport;
@@ -41,6 +46,12 @@ public class DongleSession {
             public void run() { heartbeatLoop(); }
         }, "dongle-heartbeat");
         heartbeatThread.start();
+
+        writerThread = new Thread(new Runnable() {
+            public void run() { writeLoop(); }
+        }, "dongle-writer");
+        writerThread.setPriority(Thread.MAX_PRIORITY);
+        writerThread.start();
     }
 
     /** Sequence d'ouverture (ordre repris de node-carplay). */
@@ -76,12 +87,23 @@ public class DongleSession {
         }
     }
 
-    /** Envoi « sans echec » depuis l'UI (les erreurs remontent via onError). */
+    /**
+     * Envoi asynchrone depuis l'UI ou le thread USB : ne bloque jamais l'appelant (le transfert
+     * USB se fait dans le thread « dongle-writer » ; les erreurs remontent via onError).
+     * Les glissements du doigt en attente sont fusionnes : seule la derniere position part,
+     * l'iPhone suit donc le doigt sans retard meme si l'USB est occupe.
+     */
     public void sendQuietly(Msg m) {
-        try {
-            send(m);
-        } catch (IOException e) {
-            if (running) listener.onError(e);
+        synchronized (outbox) {
+            if (m.type == Msg.TOUCH && Messages.isTouchMove(m)) {
+                Msg last = outbox.peekLast();
+                if (last != null && last.type == Msg.TOUCH && Messages.isTouchMove(last)) {
+                    outbox.pollLast();
+                }
+            }
+            if (outbox.size() >= OUTBOX_MAX) outbox.pollFirst();
+            outbox.addLast(m);
+            outbox.notify();
         }
     }
 
@@ -93,6 +115,29 @@ public class DongleSession {
         sendQuietly(Messages.command(cmd));
     }
 
+    private void writeLoop() {
+        while (running) {
+            Msg m;
+            synchronized (outbox) {
+                while (running && outbox.isEmpty()) {
+                    try {
+                        outbox.wait(500);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+                }
+                m = outbox.pollFirst();
+            }
+            if (m == null) continue;
+            try {
+                send(m);
+            } catch (IOException e) {
+                if (running) listener.onError(e);
+                return;
+            }
+        }
+    }
+
     /**
      * Arret non bloquant (appelable depuis le thread UI sans risque d'ANR).
      * Le lien USB n'est ferme qu'une fois le thread de lecture sorti : fermer la connexion
@@ -101,14 +146,16 @@ public class DongleSession {
     public synchronized void stop() {
         if (closerThread != null) return;
         running = false;
-        final Thread r = readerThread, h = heartbeatThread;
+        final Thread r = readerThread, h = heartbeatThread, w = writerThread;
         if (h != null) h.interrupt();
         if (r != null) r.interrupt();
+        if (w != null) w.interrupt();
         closerThread = new Thread(new Runnable() {
             public void run() {
                 try {
                     if (r != null) r.join(2000);
                     if (h != null) h.join(1500);
+                    if (w != null) w.join(1500);
                 } catch (InterruptedException ignored) { }
                 synchronized (writeLock) {
                     transport.close();

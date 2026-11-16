@@ -24,7 +24,9 @@ public class ProtocolTest {
             int done = 0;
             while (done < len) { int n = fromDongle.read(b, off + done, len - done); if (n < 0) throw new EOFException(); done += n; }
         }
+        volatile int writeDelayMs;
         public synchronized void write(byte[] d) throws IOException {
+            if (writeDelayMs > 0) try { Thread.sleep(writeDelayMs); } catch (InterruptedException e) { throw new IOException(e); }
             try {
                 int[] tl = Msg.decodeHeader(d);
                 if (d.length != 16 + tl[1]) throw new IOException("longueur incoherente");
@@ -116,6 +118,31 @@ public class ProtocolTest {
         tr.dongleSends(new Msg(Msg.HEARTBEAT, null));
         tr.dongleSends(new Msg(Msg.UNPLUGGED, null));
         check(rec.next().equals("disconnected"), "UNPLUGGED -> deconnexion (heartbeat ignore)");
+
+        System.out.println("== Tactile (1.7 : envoi asynchrone, glissements fusionnes) ==");
+        tr.writeDelayMs = 3;   // USB lent / occupe
+        int before = tr.sent.size();
+        long t0 = System.nanoTime();
+        s.sendTouch(Msg.TOUCH_DOWN, 0.1f, 0.5f);
+        for (int i = 1; i <= 60; i++) s.sendTouch(Msg.TOUCH_MOVE, 0.1f + i * 0.01f, 0.5f);
+        s.sendTouch(Msg.TOUCH_UP, 0.7f, 0.5f);
+        long callMs = (System.nanoTime() - t0) / 1000000L;
+        check(callMs < 20, "62 evenements tactiles sans bloquer l'appelant (" + callMs + " ms)");
+        Thread.sleep(600);
+        tr.writeDelayMs = 0;
+        List<Msg> touches = new ArrayList<Msg>();
+        synchronized (tr.sent) { for (Msg m : tr.sent.subList(before, tr.sent.size())) if (m.type == Msg.TOUCH) touches.add(m); }
+        int moves = 0, lastMoveX = -1;
+        for (Msg m : touches) {
+            ByteBuffer pb = ByteBuffer.wrap(m.payload).order(ByteOrder.LITTLE_ENDIAN);
+            int act = pb.getInt(), x = pb.getInt();
+            if (act == Msg.TOUCH_MOVE) { moves++; lastMoveX = x; }
+        }
+        int firstAct = ByteBuffer.wrap(touches.get(0).payload).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        int lastAct = ByteBuffer.wrap(touches.get(touches.size() - 1).payload).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        check(firstAct == Msg.TOUCH_DOWN && lastAct == Msg.TOUCH_UP, "appui et relache jamais perdus, dans l'ordre");
+        check(moves >= 1 && moves < 60, "glissements fusionnes (" + moves + " envoyes sur 60)");
+        check(lastMoveX == 7000, "derniere position du doigt transmise (x=" + lastMoveX + ")");
 
         Thread.sleep(2300);
         int beats = 0;

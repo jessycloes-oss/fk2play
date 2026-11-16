@@ -26,6 +26,26 @@
         <item>20</item>
         <item>15</item>
     </string-array>
+    <string-array name="display_thread_labels">
+        <item>Automatique (recommande)</item>
+        <item>Oui</item>
+        <item>Non</item>
+    </string-array>
+    <string-array name="display_thread_values">
+        <item>auto</item>
+        <item>on</item>
+        <item>off</item>
+    </string-array>
+    <string-array name="video_format_labels">
+        <item>Automatique (recommande)</item>
+        <item>RGB565 (16 bits)</item>
+        <item>RGBX (32 bits)</item>
+    </string-array>
+    <string-array name="video_format_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
     <string-array name="mic_source_labels">
         <item>Automatique</item>
         <item>MIC</item>
@@ -41,5 +61,57 @@
         <item>6</item>
         <item>5</item>
         <item>0</item>
+    </string-array>
+    <string-array name="honda_sw_address_labels">
+        <item>260 - Menu (par defaut)</item>
+        <item>258 - Source</item>
+        <item>259 - Affichage</item>
+        <item>263 - En-tete source</item>
+        <item>265 - Lanceur</item>
+        <item>266 - i-MID</item>
+    </string-array>
+    <string-array name="honda_sw_address_values">
+        <item>260</item>
+        <item>258</item>
+        <item>259</item>
+        <item>263</item>
+        <item>265</item>
+        <item>266</item>
+    </string-array>
+    <string-array name="volume_mode_labels">
+        <item>Rendu au Honda (par defaut)</item>
+        <item>Volume du son CarPlay (barre Android)</item>
+        <item>Touche volume Android</item>
+    </string-array>
+    <string-array name="volume_mode_values">
+        <item>honda</item>
+        <item>stream</item>
+        <item>key</item>
+    </string-array>
+    <string-array name="sw_reg_mode_labels">
+        <item>A - inscription + affichage</item>
+        <item>B - inscription seule</item>
+        <item>C - affichage seul (par defaut)</item>
+    </string-array>
+    <string-array name="sw_reg_mode_values">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+    </string-array>
+    <string-array name="volume_window_labels">
+        <item>Aucune (reinscription immediate)</item>
+        <item>1 seconde</item>
+        <item>2 secondes</item>
+        <item>3 secondes (par defaut)</item>
+        <item>5 secondes</item>
+        <item>10 secondes</item>
+    </string-array>
+    <string-array name="volume_window_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
     </string-array>
 </resources>

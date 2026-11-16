@@ -19,8 +19,8 @@ android {
         // Cible basse volontaire : pas de permissions a l'execution ni de contraintes recentes
         //noinspection ExpiredTargetSdkVersion
         targetSdk 22
-        versionCode 6
-        versionName "1.5-beta"
+        versionCode 16
+        versionName "2.0"
         ndk { abiFilters 'armeabi-v7a' }
     }
 
@@ -49,6 +49,8 @@ android {
             signingConfig ksFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
     }
+
+    buildFeatures { aidl true }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

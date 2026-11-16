@@ -31,7 +31,6 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
     /** Des images CarPlay arrivent : aucun message ne doit couvrir l'ecran. */
     private volatile boolean videoActive;
     /** Reglage de diagnostic : afficher le code des touches inconnues. */
-    private boolean showKeyCodes;
     /** Message permanent a reafficher apres un message passager (null = ecran libre). */
     private String baseStatus;
     private CarPlayService service;
@@ -43,6 +42,8 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_carplay);
+        // Le fond noir de la mise en page suffit : pas de seconde couche a dessiner.
+        getWindow().setBackgroundDrawable(null);
 
         surfaceView = (SurfaceView) findViewById(R.id.surface);
         status = (TextView) findViewById(R.id.status);
@@ -71,7 +72,6 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
     protected void onResume() {
         super.onResume();
         surfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-        showKeyCodes = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_keycodes", false);
         startService(new Intent(this, CarPlayService.class));
         ui.post(attach);
     }
@@ -138,7 +138,9 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
             case MotionEvent.ACTION_CANCEL: action = Msg.TOUCH_UP; break;
             default: return true;
         }
+        long t0 = System.nanoTime();
         s.sendTouch(action, e.getX() / v.getWidth(), e.getY() / v.getHeight());
+        Stats.touchSent(System.nanoTime() - t0);
         return true;
     }
 
@@ -158,32 +160,21 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
             s.sendCommand(Msg.CMD_REJECT_PHONE);
             return true;
         }
-        if (s != null) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_MEDIA_NEXT: s.sendCommand(Msg.CMD_NEXT); return true;
-                case KeyEvent.KEYCODE_MEDIA_PREVIOUS: s.sendCommand(Msg.CMD_PREV); return true;
-                case KeyEvent.KEYCODE_MEDIA_PLAY: s.sendCommand(Msg.CMD_PLAY); return true;
-                case KeyEvent.KEYCODE_MEDIA_PAUSE: s.sendCommand(Msg.CMD_PAUSE); return true;
-                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                case KeyEvent.KEYCODE_HEADSETHOOK:
-                    // Pendant un appel, la touche du kit mains libres decroche / raccroche.
-                    if (inCall) s.sendCommand(Msg.CMD_REJECT_PHONE);
-                    else s.sendCommand(Msg.CMD_PLAY_PAUSE);
-                    return true;
-                case KeyEvent.KEYCODE_CALL: s.sendCommand(Msg.CMD_ACCEPT_PHONE); return true;
-                case KeyEvent.KEYCODE_ENDCALL: s.sendCommand(Msg.CMD_REJECT_PHONE); return true;
-                case KeyEvent.KEYCODE_SEARCH:
-                case KeyEvent.KEYCODE_VOICE_ASSIST:
-                    s.sendCommand(Msg.CMD_SIRI); return true;
-                default: break;
-            }
+        // Volume au volant (codes Honda) : un cran par appui, repetition permise si maintenu.
+        if (MediaKeys.isHondaVolume(keyCode)) {
+            CarPlayService cs = CarPlayService.get();
+            HondaSteering st = cs != null ? cs.steering() : null;
+            // Touche que l'on vient de rendre au Honda : traitement normal du systeme.
+            if (st != null && st.volumeToSystem()) return super.onKeyDown(keyCode, event);
+            if (event.getRepeatCount() == 0) MediaKeys.volume(this, keyCode);
+            return true;
         }
-        if (showKeyCodes) {
-            // Diagnostic : affiche le code des touches que FK2Play ne connait pas encore.
-            android.widget.Toast.makeText(this, "Touche " + keyCode + " (" + KeyEvent.keyCodeToString(keyCode) + ")",
-                    android.widget.Toast.LENGTH_SHORT).show();
+        // Une seule commande par appui (la repetition d'une touche maintenue est ignoree).
+        if (MediaKeys.commandFor(keyCode, inCall) != 0) {
+            if (event.getRepeatCount() == 0) MediaKeys.handle(this, keyCode, "ecran");
+            return true;
         }
-        android.util.Log.i("FK2Play", "Touche non geree : " + keyCode);
+        if (event.getRepeatCount() == 0) MediaKeys.handle(this, keyCode, "ecran");
         return super.onKeyDown(keyCode, event);
     }
 

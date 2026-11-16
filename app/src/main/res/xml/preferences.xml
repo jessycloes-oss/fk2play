@@ -15,16 +15,39 @@
             android:entries="@array/fps_labels"
             android:entryValues="@array/fps_values" />
         <CheckBoxPreference
+            android:key="adaptive_video"
+            android:title="Fluidite automatique"
+            android:summary="Allege le decodage quand l'autoradio est charge (image un peu moins fine pendant ce temps)"
+            android:defaultValue="true" />
+        <CheckBoxPreference
             android:key="night_mode"
             android:title="Mode nuit CarPlay"
             android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Audio">
         <CheckBoxPreference
+            android:key="media_keys"
+            android:title="Touches musique du volant"
+            android:summary="Piste suivante / precedente au volant quand l'ecran CarPlay est affiche"
+            android:defaultValue="true" />
+        <ListPreference
+            android:key="honda_sw_address"
+            android:dependency="media_keys"
+            android:title="Adresse volant Honda"
+            android:summary="A changer seulement si les touches gauche / droite ne reagissent pas (260 par defaut)"
+            android:defaultValue="260"
+            android:entries="@array/honda_sw_address_labels"
+            android:entryValues="@array/honda_sw_address_values" />
+        <CheckBoxPreference
             android:key="calls_car_bt"
             android:title="Appels via le Bluetooth de la voiture"
             android:summary="Musique par USB, appels par le kit mains libres d'origine (micro et touches du volant). L'iPhone doit rester connecte a HandsFreeLink."
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="return_after_call"
+            android:title="Revenir a CarPlay des la fin d'un appel"
+            android:summary="Sans attendre que le Honda quitte son ecran telephone"
+            android:defaultValue="true" />
         <CheckBoxPreference
             android:key="audio_usb"
             android:title="Son CarPlay via l'autoradio (USB)"
@@ -51,11 +74,64 @@
             android:entryValues="@array/mic_source_values" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Diagnostic">
+        <ListPreference
+            android:key="display_thread"
+            android:title="Affichage sur un 2e coeur"
+            android:summary="Automatique : oui si le processeur a plusieurs coeurs (Tegra 3). Pris en compte au prochain demarrage."
+            android:defaultValue="auto"
+            android:entries="@array/display_thread_labels"
+            android:entryValues="@array/display_thread_values" />
+        <ListPreference
+            android:key="video_format"
+            android:title="Format d'affichage"
+            android:summary="Automatique : FK2Play mesure le plus rapide au demarrage"
+            android:defaultValue="0"
+            android:entries="@array/video_format_labels"
+            android:entryValues="@array/video_format_values" />
         <CheckBoxPreference
             android:key="show_keycodes"
             android:title="Afficher le code des touches"
-            android:summary="Montre le numero de chaque touche du volant non reconnue"
+            android:summary="Bulle a chaque touche du volant recue (numero et commande envoyee)"
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="volume_invert"
+            android:title="Inverser volume + / -"
+            android:summary="Si les touches volume du volant marchent a l'envers sur l'ecran CarPlay"
+            android:defaultValue="false" />
+        <ListPreference
+            android:key="sw_reg_mode"
+            android:title="Mode d'inscription volant"
+            android:summary="C (par defaut) : volume gere par le Honda, touches piste pour CarPlay"
+            android:defaultValue="C"
+            android:entries="@array/sw_reg_mode_labels"
+            android:entryValues="@array/sw_reg_mode_values" />
+        <ListPreference
+            android:key="volume_window"
+            android:title="Fenetre volume"
+            android:summary="Apres un appui volume, le Honda garde le volume pendant ce temps (appuis suivants instantanes)"
+            android:defaultValue="3"
+            android:entries="@array/volume_window_labels"
+            android:entryValues="@array/volume_window_values" />
+        <CheckBoxPreference
+            android:key="track_invert"
+            android:title="Inverser suivant / precedent"
+            android:summary="Si les touches piste du volant marchent a l'envers"
+            android:defaultValue="false" />
+        <ListPreference
+            android:key="volume_mode"
+            android:title="Methode du volume au volant"
+            android:summary="Si le volume ne change pas sur l'ecran CarPlay, essayer l'autre methode"
+            android:defaultValue="honda"
+            android:entries="@array/volume_mode_labels"
+            android:entryValues="@array/volume_mode_values" />
+        <Preference
+            android:key="honda_sw_status"
+            android:title="Service volant Honda"
+            android:summary="Pas encore contacte" />
+        <Preference
+            android:key="key_log"
+            android:title="Dernieres touches recues"
+            android:summary="Aucune pour l'instant" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Connexion">
         <CheckBoxPreference

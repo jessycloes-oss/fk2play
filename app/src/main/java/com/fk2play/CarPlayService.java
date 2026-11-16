@@ -57,6 +57,7 @@ public class CarPlayService extends Service implements DongleListener,
     private UsbManager usb;
     private VideoPipeline video;
     private AudioOutput audio;
+    private HondaSteering steering;
     private volatile DongleSession session;
     private volatile MicInput mic;
     private volatile DongleConfig config;
@@ -64,6 +65,16 @@ public class CarPlayService extends Service implements DongleListener,
     private volatile boolean videoActive;
     private volatile boolean inCall;
     private volatile boolean callOnCarBluetooth;
+    /** L'ecran CarPlay etait affiche (ou l'etait il y a peu) au debut de l'appel : on y revient a la fin. */
+    private volatile boolean returnAfterCall;
+    /** Dernier moment ou l'ecran CarPlay etait affiche (uptime ms). */
+    private volatile long lastUiShown;
+    /** Le Honda peut afficher son ecran telephone juste avant que l'appel ne nous soit signale. */
+    private static final long RECENT_UI_MS = 60000;
+    /** Seconde tentative si le Honda reprend la main juste apres notre retour. */
+    private static final long BRING_BACK_RETRY_MS = 1500;
+    /** Decodage en arriere-plan conserve quelques secondes apres l'appel, le temps du retour. */
+    private static final long BACKGROUND_DECODE_GRACE_MS = 4000;
     private volatile String baseStatus = "Connexion au dongle...";
     private boolean permissionPending;
     private boolean connecting;
@@ -78,6 +89,9 @@ public class CarPlayService extends Service implements DongleListener,
         video = new VideoPipeline(this, this);
         audio = new AudioOutput();
         config = loadConfig(this);
+        video.setAdaptive(config.adaptiveVideo);
+        steering = new HondaSteering(this);
+        steering.bind();
 
         IntentFilter f = new IntentFilter(ACTION_USB_PERMISSION);
         f.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
@@ -97,9 +111,12 @@ public class CarPlayService extends Service implements DongleListener,
     @Override
     public void onDestroy() {
         instance = null;
+        MediaKeys.release(this);
+        steering.unbind();
         unregisterReceiver(usbReceiver);
         disconnect();
-        video.setSurface(null);
+        video.release();
+        audio.release();
         stopForeground(true);
         super.onDestroy();
     }
@@ -128,16 +145,24 @@ public class CarPlayService extends Service implements DongleListener,
     public void attachUi(Ui u) {
         ui = u;
         applyConfig(loadConfig(this));
+        MediaKeys.claim(this);
+        // Touches piste suivante / precedente du volant : service propre au Honda Connect.
+        steering.setActive(true);
         connect();
     }
 
     public void detachUi(Ui u) {
-        if (ui == u) ui = null;
+        if (ui == u) {
+            ui = null;
+            steering.setActive(false);
+            lastUiShown = android.os.SystemClock.uptimeMillis();
+        }
     }
 
     public void setSurface(Surface s) { video.setSurface(s); }
 
     public DongleSession session() { return session; }
+    public HondaSteering steering() { return steering; }
     public boolean isVideoActive() { return videoActive; }
     public boolean isInCall() { return inCall; }
     public String baseStatus() { return baseStatus; }
@@ -149,6 +174,7 @@ public class CarPlayService extends Service implements DongleListener,
     private synchronized void applyConfig(DongleConfig c) {
         DongleConfig old = config;
         config = c;
+        video.setAdaptive(c.adaptiveVideo);
         if (session != null && !initKey(old).equals(initKey(c))) {
             android.util.Log.i("FK2Play", "Reglages modifies : reouverture de la session");
             disconnect();
@@ -228,10 +254,37 @@ public class CarPlayService extends Service implements DongleListener,
         videoActive = false;
         inCall = false;
         callOnCarBluetooth = false;
+        returnAfterCall = false;
+        video.setBackgroundDecode(false);
+        video.reset();
         if (mic != null) { mic.stop(); mic = null; }
         if (session != null) { session.stop(); session = null; }
         audio.stopAll();
     }
+
+    /**
+     * Fin d'appel : sans attendre que le Honda Connect quitte son ecran telephone (plusieurs
+     * secondes), on remet tout de suite l'ecran CarPlay au premier plan. L'image a ete tenue
+     * a jour pendant l'appel : elle s'affiche instantanement.
+     */
+    private final Runnable claimMediaKeys = new Runnable() {
+        public void run() { MediaKeys.claim(CarPlayService.this); }
+    };
+
+    private final Runnable bringBack = new Runnable() {
+        public void run() {
+            if (ui != null || session == null || inCall) return;
+            android.util.Log.i("FK2Play", "Fin d'appel : retour a l'ecran CarPlay");
+            startActivity(new Intent(CarPlayService.this, CarPlayActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+        }
+    };
+
+    private final Runnable stopBackgroundDecode = new Runnable() {
+        public void run() {
+            if (!inCall) video.setBackgroundDecode(false);
+        }
+    };
 
     private final Runnable retry = new Runnable() {
         public void run() { connect(); }
@@ -324,6 +377,13 @@ public class CarPlayService extends Service implements DongleListener,
         DongleConfig c = config;
         switch (cmd) {
             case Msg.AUDIO_PHONECALL_START:
+                if (!inCall) {
+                    returnAfterCall = ui != null
+                            || android.os.SystemClock.uptimeMillis() - lastUiShown < RECENT_UI_MS;
+                    handler.removeCallbacks(stopBackgroundDecode);
+                    // L'image CarPlay reste a jour pendant l'appel (peu de calcul : ecran d'appel).
+                    if (returnAfterCall && c.returnAfterCall) video.setBackgroundDecode(true);
+                }
                 inCall = true;
                 if (c.callsViaCarBluetooth && c.audioOverUsb) {
                     // L'appel part sur le Bluetooth de la voiture (micro et touches d'origine).
@@ -335,6 +395,7 @@ public class CarPlayService extends Service implements DongleListener,
                 }
                 break;
             case Msg.AUDIO_PHONECALL_STOP:
+                Stats.callEnded();
                 inCall = false;
                 if (m != null) m.stop();
                 if (callOnCarBluetooth) {
@@ -342,6 +403,17 @@ public class CarPlayService extends Service implements DongleListener,
                     DongleSession s = session;
                     if (s != null) s.sendCommand(Msg.CMD_AUDIO_TRANSFER_OFF);
                 }
+                if (returnAfterCall && c.returnAfterCall) {
+                    handler.post(bringBack);
+                    handler.postDelayed(bringBack, BRING_BACK_RETRY_MS);
+                }
+                returnAfterCall = false;
+                handler.postDelayed(stopBackgroundDecode, BACKGROUND_DECODE_GRACE_MS);
+                break;
+            case Msg.AUDIO_MEDIA_START:
+                // La radio Honda a pu reprendre la main : FK2Play redevient le lecteur actif
+                // pour recevoir piste suivante / precedente du volant.
+                handler.post(claimMediaKeys);
                 break;
             case Msg.AUDIO_SIRI_START:
                 if (c.useCarMic && m != null) m.start();
@@ -357,7 +429,10 @@ public class CarPlayService extends Service implements DongleListener,
     @Override
     public void onStatus(String message) {
         android.util.Log.i("FK2Play", message);
-        if (message.startsWith("Dongle initialise")) status(message, true, false);
+        if (message.startsWith("Dongle initialise")) {
+            status(message, true, false);
+            handler.post(claimMediaKeys);
+        }
         else status(message, false, false);
     }
 
@@ -409,6 +484,13 @@ public class CarPlayService extends Service implements DongleListener,
         c.useCarMic = p.getBoolean("car_mic", true);
         c.audioOverUsb = p.getBoolean("audio_usb", true);
         c.callsViaCarBluetooth = p.getBoolean("calls_car_bt", false);
+        c.returnAfterCall = p.getBoolean("return_after_call", true);
+        c.adaptiveVideo = p.getBoolean("adaptive_video", true);
+        String dt = p.getString("display_thread", "auto");
+        VideoPipeline.forceDisplayThread = "on".equals(dt) ? Boolean.TRUE : "off".equals(dt) ? Boolean.FALSE : null;
+        try {
+            com.fk2play.video.FfmpegDecoder.forcedFormat = Integer.parseInt(p.getString("video_format", "0"));
+        } catch (NumberFormatException ignored) { }
         return c;
     }
 }

@@ -19,3 +19,6 @@ keystore.properties
 .idea/
 *.iml
 .DS_Store
+
+# Fichiers de publication generes localement
+out/

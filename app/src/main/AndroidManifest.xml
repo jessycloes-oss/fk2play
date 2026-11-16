@@ -48,6 +48,15 @@
             android:name=".CarPlayService"
             android:exported="false" />
 
+        <!-- Touches du volant (piste suivante / precedente, lecture / pause) -->
+        <receiver
+            android:name=".MediaButtonReceiver"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".MicTestActivity"
             android:exported="false"

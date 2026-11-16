@@ -1,5 +1,94 @@
 # Historique des versions
 
+## 2.0 — 16 novembre 2026 (première version stable)
+
+Première version qui n'est plus une bêta : validée en voiture (Civic Type R FK2, Honda Connect RC3,
+dongle CPC200-CCPA, iPhone en CarPlay sans fil). Elle réunit le travail de la 1.7 (jamais publiée
+séparément) :
+
+- **Touches du volant** : **piste suivante / précédente** pour CarPlay, et le **volume reste géré par le
+  Honda** (réactif, affiché au tableau de bord). FK2Play se signale au service volant du Honda Connect
+  quand l'écran CarPlay est affiché ; le Honda lui envoie alors les touches piste. Méthode découverte
+  par **MaKi83** (OpenDroidAuto) — merci ! Réglages de secours en *Diagnostic* (mode d'inscription A/B/C,
+  inversions, journal des touches).
+- **Fluidité** : image plus fluide et plus réactive quand l'autoradio est chargé, son qui ne freine plus
+  l'image, rattrapage du retard, décodage sur deux cœurs du Tegra 3.
+- **Appels** : retour immédiat sur CarPlay à la fin d'un appel.
+- Validé en voiture : image, tactile, musique, appels via HandsFreeLink, CarPlay en arrière-plan,
+  fluidité, touches du volant.
+
+### Détail du développement de la 2.0 (ex-1.7, builds 8 à 15)
+
+Objectif : une image plus fluide et plus réactive quand le Honda Connect est chargé (Tegra 3,
+Android 4.0.4, logiciels Honda qui tournent en même temps), et un retour immédiat sur CarPlay à la
+fin d'un appel. La 1.6 n'a pas été publiée (essai personnel abandonné).
+
+- **Piste suivante / précédente au volant — service volant Honda** (build 10) : le Honda Connect ne
+  transmet pas ces touches par les voies Android standard (vérifié en voiture avec le build 9). FK2Play
+  s'inscrit désormais auprès du service volant du Honda Connect (SteeringMenuService) quand l'écran
+  CarPlay est affiché. Méthode découverte par MaKi83 (OpenDroidAuto) — merci ! Réglage *Adresse
+  volant Honda* (260 par défaut) ; en Diagnostic, *Service volant Honda* indique l'état de la connexion.
+  Build 11 : les codes du Honda (65534 précédent, 65535 suivant) sont reconnus ; le volume
+  Build 12 : en réalité le Honda envoie ces touches à l'écran FK2Play avec des codes **négatifs**
+  (-65534 précédent, -65535 suivant, -65532/-65533 volume). Ils sont désormais reconnus ; le volume
+  au volant règle le son CarPlay (options *Inverser volume + / -* et *Méthode du volume au volant*
+  en Diagnostic).
+  Build 13 : codes corrigés après essai (volume + -65535, volume − -65534, pistes -65532/-65533) ;
+  le volume est rendu au Honda (volume réel et affichage au tableau de bord) ; option *Inverser
+  suivant / précédent*.
+  Build 14 : *Fenêtre volume* (3 s par défaut) — après un appui volume, le Honda garde le volume
+  quelques secondes, les appuis suivants sont instantanés ; *Mode d'inscription volant* A/B/C
+  (Diagnostic) pour chercher un mode où le Honda garde le volume.
+  Build 15 : **mode C par défaut**, validé en voiture — le Honda garde le volume (instantané,
+  affichage au tableau de bord) et les touches piste vont à CarPlay, sans délai.
+- **Piste suivante / précédente au volant** (build 9, après le premier essai en voiture) : FK2Play se
+  déclare lecteur multimédia auprès d'Android (focus audio, récepteur MEDIA_BUTTON, RemoteControlClient)
+  pour recevoir les touches musique du volant, même quand l'écran CarPlay n'est pas affiché. Les codes
+  MEDIA_NEXT/PREVIOUS, FAST_FORWARD/REWIND, CHANNEL_UP/DOWN et DPAD droite/gauche passent piste
+  suivante / précédente. Option *Touches musique du volant* (cochée) ; en Diagnostic, *Dernières
+  touches reçues* liste les 8 dernières touches et la commande envoyée.
+
+- **Retour immédiat sur CarPlay à la fin d'un appel** : FK2Play n'attend plus que le Honda quitte
+  son écran téléphone, il revient lui-même au premier plan (seulement si CarPlay était affiché avant
+  l'appel, ou dans la minute précédente). Pendant l'appel, l'image CarPlay reste à jour en arrière-plan,
+  donc elle s'affiche **instantanément** au retour. Option *Revenir à CarPlay dès la fin d'un appel*
+  (cochée par défaut).
+- **Retour instantané** sur l'écran CarPlay depuis une autre appli : la dernière image s'affiche tout
+  de suite, puis l'image en direct ; l'image clé est redemandée si elle tarde.
+- **Le son ne freine plus l'image** : l'écriture du son se fait dans un thread audio dédié. Avant, un
+  tampon audio plein (rafale après une coupure Wi-Fi, léger décalage d'horloge iPhone/autoradio)
+  bloquait la réception USB, donc l'image.
+- **Rattrapage du retard** : si des images s'accumulent, seule la plus récente est affichée ; le
+  retard se résorbe au lieu de durer. Fini le cercle vicieux de la 1.5 (une surcharge passagère la
+  faisait tomber durablement à quelques images/s).
+- **Fluidité automatique** : décodage allégé (filtre anti-blocs sauté) tant que l'autoradio n'arrive
+  pas à suivre, retour à la normale après 3 s sans retard. Option désactivable.
+- **Deux cœurs** : sur le Tegra 3 (4 cœurs), décodage et affichage tournent en parallèle.
+- **Format d'affichage choisi sur l'appareil** : au démarrage, FK2Play mesure le coût réel d'affichage
+  en 16 bits (RGB565) et en 32 bits (RGBX, conversion NEON) et garde le plus rapide.
+- **Tactile** : l'envoi au dongle ne bloque plus l'écran, et les glissements en attente sont fusionnés
+  (l'iPhone reçoit toujours la dernière position du doigt).
+- Moins de travail pour le ramasse-miettes Android : plus d'allocation par image vidéo ou bloc audio.
+- Diagnostic : réglages *Affichage sur un 2e cœur* et *Format d'affichage* (automatiques par défaut,
+  utiles en cas de souci) ; mesures de réactivité dans le journal Android (`FK2Stat`).
+- Banc d'essai reproductible : `sim/make_bench.py` + `sim/run_bench.sh` (émulateur Android 4.0.4,
+  faux dongle en temps réel avec musique, coupures Wi-Fi, appel, pic de charge et gestes tactiles).
+
+Mesures sur ce banc (émulateur volontairement surchargé ; 4 passages de la 1.5, 5 de la 1.7) :
+
+| | 1.5 | 1.7 |
+|---|---|---|
+| Images affichées par seconde | 8,7 à 9,6 | 10 à 13 |
+| Retard moyen de l'image | 159 à 172 ms | 74 à 78 ms |
+| Images perdues (par 5 s) | ≈ 103 | 5 à 19 |
+| Réception USB bloquée par le son (par 5 s) | 3,3 à 4,2 s | 0,02 à 0,03 s |
+| Temps de l'écran pour un geste tactile | 2,0 à 2,8 ms | 0,2 à 0,9 ms |
+| Retour sur CarPlay après un appel | 1,2 à 1,8 s *après* que le Honda a rouvert FK2Play | 0,2 à 0,3 s, sans attendre le Honda |
+| Retour sur CarPlay depuis une autre appli | 0,3 à 0,7 s | 0,02 à 0,04 s (dernière image) |
+
+L'émulateur n'a qu'un cœur et un affichage logiciel : les valeurs absolues ne sont pas celles du
+Tegra 3, seul l'écart entre les versions compte. À confirmer en voiture.
+
 ## 1.5-beta — 15 novembre 2026 (CarPlay en arrière-plan)
 
 Retour d'essai : quitter l'écran CarPlay (pour aller dans les réglages par exemple) coupait

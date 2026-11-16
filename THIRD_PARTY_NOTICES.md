@@ -21,6 +21,11 @@ Le protocole USB du dongle a été documenté par la communauté, notamment par 
 **pycarplay** (Colin Munro) et **node-carplay**. FK2Play en est une réimplémentation
 indépendante en Java ; aucun code de ces projets n'est inclus.
 
+Les touches du volant (piste suivante / précédente) passent par le service volant du Honda
+Connect (`SteeringMenuService`, Fujitsu Ten). Son fonctionnement a été découvert par **MaKi83**
+(projet **OpenDroidAuto**, GPL-3.0). FK2Play en déclare l'interface Binder (fichiers AIDL, pour
+l'interopérabilité) avec sa propre implémentation ; aucun code d'OpenDroidAuto n'est inclus.
+
 ## Outils non inclus
 
 **Honda Permissions** (auteur : S_Mike, forum XDA) est nécessaire pour installer FK2Play sur

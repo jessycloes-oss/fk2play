@@ -31,9 +31,26 @@ public class MediaCodecDecoder implements VideoDecoder {
         }
     }
 
+    /** MediaCodec est lie a son ecran : il est recree a chaque retour sur CarPlay. */
+    @Override
+    public boolean keepsStateWithoutSurface() { return false; }
+
+    @Override
+    public boolean setSurface(Surface surface, boolean showLast) { return false; }
+
+    @Override
+    public void setFast(boolean fast) { }
+
+    /** MediaCodec affiche lui-meme ses images. */
+    @Override
+    public boolean renderPending() { return false; }
+
+    @Override
+    public void forgetLast() { }
+
     @Override
     @SuppressWarnings("deprecation")
-    public boolean decode(byte[] data, int off, int len) {
+    public int decode(byte[] data, int off, int len, boolean show) {
         try {
             int idx = codec.dequeueInputBuffer(20000);
             if (idx >= 0) {
@@ -44,12 +61,14 @@ public class MediaCodecDecoder implements VideoDecoder {
                 codec.queueInputBuffer(idx, 0, len, pts, 0);
             }
             int out;
+            int result = NOTHING;
             while ((out = codec.dequeueOutputBuffer(info, 0)) >= 0) {
-                codec.releaseOutputBuffer(out, true);
+                codec.releaseOutputBuffer(out, show);
+                result = show ? SHOWN : DECODED;
             }
-            return true;
+            return result;
         } catch (Exception e) {
-            return false;
+            return -1;
         }
     }
 

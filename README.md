@@ -1,16 +1,16 @@
 # FK2Play — Apple CarPlay sur le Honda Connect (Android 4.0.4)
 
-![statut](https://img.shields.io/badge/statut-B%C3%8ATA%20%E2%80%94%201er%20essai%20r%C3%A9el%20r%C3%A9ussi-yellow)
+![statut](https://img.shields.io/badge/version-2.0%20stable-brightgreen)
 ![android](https://img.shields.io/badge/Android-4.0.4%20(API%2015)-green)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 
-> [!WARNING]
-> **Version bêta.** ✅ **Premier essai réel réussi** le 15 novembre 2026 sur une Civic Type R FK2
-> (Honda Connect RC3, build 09.08C.00.1123) : CarPlay sans fil, image, tactile, musique et volume
-> au volant fonctionnent. Les autres versions (RC5 à RC8) et les autres modèles n'ont pas encore été
-> testés : **vos retours sont nécessaires**. Après un essai, réussi ou non, ouvrez un
-> [rapport de test](../../issues/new?template=rapport-de-test.yml). Utilisation à vos risques ;
-> faites les essais **à l'arrêt**.
+> [!NOTE]
+> **Version 2.0 (16 novembre 2026) — première version stable.** Validée en voiture sur une Civic Type R
+> FK2 (Honda Connect RC3, build 09.08C.00.1123) : CarPlay sans fil, image fluide, tactile, musique,
+> appels via le kit mains libres d'origine et **touches du volant** (volume, piste suivante / précédente).
+> Les autres versions (RC5 à RC8) et les autres modèles restent à confirmer : vos
+> [rapports de test](../../issues/new?template=rapport-de-test.yml) sont les bienvenus.
+> Utilisation à vos risques ; faites l'installation **à l'arrêt**.
 
 *English version below.*
 
@@ -28,12 +28,12 @@ iPhone  ──Wi-Fi/Bluetooth──▶  dongle Carlinkit CCPA  ──USB──�
 
 ## Télécharger
 
-Dernière pré-version : page [**Releases**](../../releases).
+Dernière version : page [**Releases**](../../releases).
 
 | Fichier | Usage |
 |---|---|
 | `HondaAppCenter_A1.apk` | FK2Play **déjà renommé** pour l'installateur du Honda Connect : à copier tel quel à la racine d'une clé USB FAT32. |
-| `FK2Play-1.5-beta.apk` | Le même fichier sous son vrai nom. |
+| `FK2Play-2.0.apk` | Le même fichier sous son vrai nom. |
 | `Mode_emploi_FK2Play_toutes_versions.pdf` | Mode d'emploi pour toutes les versions RC (RC3 à RC8). |
 | `Mode_emploi_FK2Play_RC3.pdf` | Mode d'emploi illustré, réservé aux Honda Connect **RC3** (build `09.08C.00.xxxx`). |
 
@@ -76,9 +76,19 @@ et laissez l'iPhone connecté à HandsFreeLink. La musique reste en USB, et les 
 et les touches du volant d'origine (validé en voiture en mode « tout Bluetooth » ; mode mixte de la
 1.4 à confirmer). Autre solution : un dongle **CCPA-MIC** (micro intégré).
 
-**Arrière-plan** (1.5) : quitter l'écran CarPlay ne coupe plus rien. Musique, appels et connexion
-continuent pendant que vous utilisez les réglages ou une autre appli ; l'icône FK2Play (ou sa
-notification) ramène l'image. Vérifié en émulateur, à confirmer en voiture.
+**Arrière-plan** (1.5, validé en voiture) : quitter l'écran CarPlay ne coupe plus rien. Musique, appels
+et connexion continuent pendant que vous utilisez les réglages ou une autre appli ; l'icône FK2Play (ou sa
+notification) ramène l'image.
+
+**Fluidité** (2.0, validé en voiture) : image plus fluide et plus réactive quand l'autoradio est chargé,
+retour immédiat sur CarPlay à la fin d'un appel (sans attendre l'écran téléphone du Honda). Détails et
+mesures dans le [CHANGELOG](CHANGELOG.md).
+
+**Touches du volant** (2.0, validé en voiture) : sur l'écran CarPlay, les touches piste du volant passent
+au morceau suivant / précédent, et le volume reste géré par le Honda (affiché au tableau de bord). La touche
+SOURCE ouvre toujours les sources du Honda. En cas de souci : *Réglages FK2Play → Diagnostic* (« Mode
+d'inscription volant » : C par défaut, A en secours ; « Inverser suivant / précédent » ; « Dernières touches
+reçues »). Les touches piste ne pilotent CarPlay que lorsque son écran est affiché.
 
 **Pas encore vérifié** :
 - les versions RC5 à RC8 et les autres modèles (HR-V, CR-V, Jazz…) ;
@@ -132,7 +142,8 @@ docs/               modes d'emploi (PDF) et images
 
 Code sous licence **MIT** ([LICENSE](LICENSE)). FFmpeg est intégré sous **LGPL 2.1+**
 ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Protocole du dongle documenté par la communauté
-(pycarplay de Colin Munro, node-carplay). Merci à S_Mike pour Honda Permissions et aux membres du fil XDA.
+(pycarplay de Colin Munro, node-carplay). Merci à S_Mike pour Honda Permissions, à MaKi83 (OpenDroidAuto)
+pour la découverte du service volant du Honda Connect, et aux membres du fil XDA.
 
 Apple, CarPlay et iPhone sont des marques d'Apple Inc. ; Honda et Honda Connect, de Honda Motor Co., Ltd.
 FK2Play est un projet indépendant, **non affilié** à Apple, Honda ni Carlinkit.
@@ -141,10 +152,11 @@ FK2Play est un projet indépendant, **non affilié** à Apple, Honda ni Carlinki
 
 ## English
 
-> [!WARNING]
-> **Beta.** ✅ **First real-car test succeeded** (Nov 15, 2026, Civic Type R FK2, Honda Connect RC3): wireless CarPlay,
-> video, touch, music and steering-wheel volume work. Other RC versions and models are untested. **We need your feedback**: please open a
-> [test report](../../issues/new?template=rapport-de-test.yml), whether it works or not. Use at your own risk and test **while parked**.
+> [!NOTE]
+> **Version 2.0 (Nov 16, 2026) — first stable release.** Validated in a Civic Type R FK2 (Honda Connect RC3): wireless CarPlay,
+> smooth video, touch, music, calls through the stock hands-free kit and **steering-wheel buttons** (volume, next / previous track).
+> Other RC versions and models still need confirmation: [test reports](../../issues/new?template=rapport-de-test.yml) are welcome.
+> Use at your own risk and install **while parked**.
 
 FK2Play brings **Apple CarPlay** to the stock first-generation **Honda Connect** head unit (2015-2017 Civic incl. Type R FK2,
 HR-V, CR-V, Jazz… running Android 4.0.4 on an NVIDIA Tegra 3) using a **Carlinkit CPC200-CCPA** ("Autokit") dongle.
@@ -155,7 +167,8 @@ install on the Honda Connect. FK2Play replaces it: it drives the dongle over USB
 - **Download**: see [Releases](../../releases). `HondaAppCenter_A1.apk` is FK2Play already renamed for the Honda installer.
 - **Install**: requires S_Mike's *Honda Permissions* (XDA, not included). Easy on RC3 to RC6.1 (rename trick); RC7/RC8 need a downgrade to RC6 or iRoot (see the XDA thread). Install guides are in French (PDF in Releases and `docs/`); the steps match the ones from the XDA thread.
 - **First test**: launch FK2Play without the dongle and read the bracketed diagnostic line (`USB hote Android : oui/NON`), then plug the dongle directly (no hub). `Dongle initialise...` means the head unit talks to the dongle. Pair the iPhone over Bluetooth with the dongle and accept CarPlay.
-- **Not verified yet**: RC5–RC8 and other models, car microphone (Siri/calls), long trips.
+- **Steering wheel**: on the CarPlay screen, the track buttons skip next / previous and volume stays handled by the Honda (thanks to MaKi83's discovery of the Honda steering service). Fallbacks in *Settings → Diagnostic*.
+- **Not verified yet**: RC5–RC8 and other models, long trips.
 - **Honda Permissions → Process Controls**: keep SoundInterrupt and SoundInterruptMute **OFF**, otherwise steering-wheel volume stops working.
 - **Phone calls**: the car microphone is not reachable by Android apps. Enable *"Appels via le Bluetooth de la voiture"* and keep the iPhone connected to the Honda's HandsFreeLink: music stays on USB, calls use the original hands-free kit.
 - **License**: MIT; FFmpeg under LGPL 2.1+. Not affiliated with Apple, Honda or Carlinkit.

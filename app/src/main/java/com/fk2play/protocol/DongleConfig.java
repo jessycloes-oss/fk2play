@@ -22,5 +22,9 @@ public class DongleConfig {
      * son propre micro. Utile quand le micro de la voiture est inaccessible aux applis (Honda Connect).
      */
     public boolean callsViaCarBluetooth = false;
+    /** Fin d'appel : revenir tout de suite a l'ecran CarPlay s'il etait affiche avant l'appel. */
+    public boolean returnAfterCall = true;
+    /** Decodage allege automatique quand l'autoradio n'arrive plus a suivre. */
+    public boolean adaptiveVideo = true;
     public int mediaDelayMs = 300;
 }

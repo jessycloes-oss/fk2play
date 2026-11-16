@@ -76,6 +76,12 @@ public final class Messages {
         return new Msg(Msg.AUDIO_DATA, b.array());
     }
 
+    /** Glissement du doigt (fusionnable avec le suivant). */
+    public static boolean isTouchMove(Msg m) {
+        byte[] p = m.payload;
+        return p.length >= 4 && (p[0] & 0xFF) == Msg.TOUCH_MOVE && p[1] == 0 && p[2] == 0 && p[3] == 0;
+    }
+
     private static int clamp(int v) {
         return v < 0 ? 0 : (v > 10000 ? 10000 : v);
     }
