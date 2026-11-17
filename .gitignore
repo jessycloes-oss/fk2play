@@ -22,3 +22,6 @@ keystore.properties
 
 # Fichiers de publication generes localement
 out/
+ics-sdk/
+app/src/main/obj-omx/
+sim/__pycache__/

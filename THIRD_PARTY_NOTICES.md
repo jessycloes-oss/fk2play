@@ -26,6 +26,16 @@ Connect (`SteeringMenuService`, Fujitsu Ten). Son fonctionnement a été découv
 (projet **OpenDroidAuto**, GPL-3.0). FK2Play en déclare l'interface Binder (fichiers AIDL, pour
 l'interopérabilité) avec sa propre implémentation ; aucun code d'OpenDroidAuto n'est inclus.
 
+## Décodeur vidéo matériel (OpenDroidAuto)
+
+Le décodeur matériel (`app/src/main/jni-omx/`, `OmxDecoder.java`) est basé sur le module
+**omxvideocodec** d'**OpenDroidAuto**, © MaKi983 / **MaKi83** (https://github.com/MaKi983/OpenDroidAuto,
+publié sous GPL-3.0). Son auteur a autorisé sa réutilisation dans FK2Play sous licence MIT, à condition
+que le projet reste libre et open source (fil XDA « Honda Connect Android System », 16 novembre 2026).
+`H264NalParser.h` est repris tel quel ; `OMXSource` et `OMXDecoder` sont adaptés ; le pont JNI suit son
+organisation. Les en-têtes AOSP 4.0.4 (Apache 2.0) et les bibliothèques système servant à l'édition de
+liens sont téléchargés à la compilation et ne sont pas publiés dans ce dépôt.
+
 ## Outils non inclus
 
 **Honda Permissions** (auteur : S_Mike, forum XDA) est nécessaire pour installer FK2Play sur

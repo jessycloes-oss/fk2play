@@ -114,4 +114,12 @@
         <item>5</item>
         <item>10</item>
     </string-array>
+    <string-array name="video_decoder_labels">
+        <item>Automatique (materiel si possible)</item>
+        <item>Logiciel uniquement (FFmpeg)</item>
+    </string-array>
+    <string-array name="video_decoder_values">
+        <item>auto</item>
+        <item>sw</item>
+    </string-array>
 </resources>

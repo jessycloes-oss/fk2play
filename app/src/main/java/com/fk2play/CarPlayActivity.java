@@ -64,6 +64,8 @@ public class CarPlayActivity extends Activity implements SurfaceHolder.Callback,
         if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
             String simFile = getIntent().getStringExtra(CarPlayService.EXTRA_SIM_FILE);
             if (simFile != null) svc.putExtra(CarPlayService.EXTRA_SIM_FILE, simFile);
+            // Test emulateur : decodeur OMX logiciel d'Android accepte a la place du materiel.
+            if (getIntent().getBooleanExtra("omx_any", false)) com.fk2play.video.OmxDecoder.allowSoftwareOmxForTests = true;
         }
         startService(svc);
     }

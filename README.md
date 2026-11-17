@@ -1,11 +1,12 @@
 # FK2Play — Apple CarPlay sur le Honda Connect (Android 4.0.4)
 
-![statut](https://img.shields.io/badge/version-2.0%20stable-brightgreen)
+![statut](https://img.shields.io/badge/version-2.1%20stable-brightgreen)
 ![android](https://img.shields.io/badge/Android-4.0.4%20(API%2015)-green)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 
 > [!NOTE]
-> **Version 2.0 (16 novembre 2026) — première version stable.** Validée en voiture sur une Civic Type R
+> **Version 2.1 (17 novembre 2026) — décodage vidéo matériel.** L'image CarPlay est maintenant décodée
+> par la puce vidéo du Tegra 3 (30 images/s, 0 image perdue). Validée en voiture sur une Civic Type R
 > FK2 (Honda Connect RC3, build 09.08C.00.1123) : CarPlay sans fil, image fluide, tactile, musique,
 > appels via le kit mains libres d'origine et **touches du volant** (volume, piste suivante / précédente).
 > Les autres versions (RC5 à RC8) et les autres modèles restent à confirmer : vos
@@ -33,7 +34,7 @@ Dernière version : page [**Releases**](../../releases).
 | Fichier | Usage |
 |---|---|
 | `HondaAppCenter_A1.apk` | FK2Play **déjà renommé** pour l'installateur du Honda Connect : à copier tel quel à la racine d'une clé USB FAT32. |
-| `FK2Play-2.0.apk` | Le même fichier sous son vrai nom. |
+| `FK2Play-2.1.apk` | Le même fichier sous son vrai nom. |
 | `Mode_emploi_FK2Play_toutes_versions.pdf` | Mode d'emploi pour toutes les versions RC (RC3 à RC8). |
 | `Mode_emploi_FK2Play_RC3.pdf` | Mode d'emploi illustré, réservé aux Honda Connect **RC3** (build `09.08C.00.xxxx`). |
 
@@ -79,6 +80,12 @@ et les touches du volant d'origine (validé en voiture en mode « tout Bluetooth
 **Arrière-plan** (1.5, validé en voiture) : quitter l'écran CarPlay ne coupe plus rien. Musique, appels
 et connexion continuent pendant que vous utilisez les réglages ou une autre appli ; l'icône FK2Play (ou sa
 notification) ramène l'image.
+
+**Décodage vidéo matériel** (2.1, validé en voiture) : l'image H.264 est décodée par la puce vidéo
+du Tegra 3 (`OMX.Nvidia.h264.decode`) et affichée directement : 30 images/s, processeur soulagé. Repli
+automatique sur le décodage logiciel (FFmpeg) si le matériel n'est pas disponible. Vérification :
+*Réglages FK2Play → Diagnostic → Décodeur vidéo actif* (dernier décodeur utilisé, images affichées).
+Code basé sur le module **omxvideocodec d'OpenDroidAuto de MaKi83**, réutilisé avec son accord — merci !
 
 **Fluidité** (2.0, validé en voiture) : image plus fluide et plus réactive quand l'autoradio est chargé,
 retour immédiat sur CarPlay à la fin d'un appel (sans attendre l'écran téléphone du Honda). Détails et
@@ -143,7 +150,8 @@ docs/               modes d'emploi (PDF) et images
 Code sous licence **MIT** ([LICENSE](LICENSE)). FFmpeg est intégré sous **LGPL 2.1+**
 ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Protocole du dongle documenté par la communauté
 (pycarplay de Colin Munro, node-carplay). Merci à S_Mike pour Honda Permissions, à MaKi83 (OpenDroidAuto)
-pour la découverte du service volant du Honda Connect, et aux membres du fil XDA.
+pour la découverte du service volant du Honda Connect et pour son décodeur vidéo matériel (omxvideocodec,
+réutilisé avec son accord), et aux membres du fil XDA.
 
 Apple, CarPlay et iPhone sont des marques d'Apple Inc. ; Honda et Honda Connect, de Honda Motor Co., Ltd.
 FK2Play est un projet indépendant, **non affilié** à Apple, Honda ni Carlinkit.
@@ -153,7 +161,7 @@ FK2Play est un projet indépendant, **non affilié** à Apple, Honda ni Carlinki
 ## English
 
 > [!NOTE]
-> **Version 2.0 (Nov 16, 2026) — first stable release.** Validated in a Civic Type R FK2 (Honda Connect RC3): wireless CarPlay,
+> **Version 2.1 (Nov 17, 2026) — hardware video decoding** (Tegra 3, 30 fps), based on MaKi83's omxvideocodec from OpenDroidAuto, reused with his permission. Validated in a Civic Type R FK2 (Honda Connect RC3): wireless CarPlay,
 > smooth video, touch, music, calls through the stock hands-free kit and **steering-wheel buttons** (volume, next / previous track).
 > Other RC versions and models still need confirmation: [test reports](../../issues/new?template=rapport-de-test.yml) are welcome.
 > Use at your own risk and install **while parked**.
@@ -161,8 +169,8 @@ FK2Play est un projet indépendant, **non affilié** à Apple, Honda ni Carlinki
 FK2Play brings **Apple CarPlay** to the stock first-generation **Honda Connect** head unit (2015-2017 Civic incl. Type R FK2,
 HR-V, CR-V, Jazz… running Android 4.0.4 on an NVIDIA Tegra 3) using a **Carlinkit CPC200-CCPA** ("Autokit") dongle.
 The dongle holds Apple's authentication chip and runs CarPlay; the vendor's "Autokit" app needs Android 4.4 and won't
-install on the Honda Connect. FK2Play replaces it: it drives the dongle over USB, decodes H.264 with FFmpeg in software
-(no MediaCodec before Android 4.1), plays audio and sends touch and microphone back.
+install on the Honda Connect. FK2Play replaces it: it drives the dongle over USB, decodes H.264 with the Tegra 3 hardware decoder
+(OMX through libstagefright; FFmpeg software fallback, since there is no MediaCodec before Android 4.1), plays audio and sends touch and microphone back.
 
 - **Download**: see [Releases](../../releases). `HondaAppCenter_A1.apk` is FK2Play already renamed for the Honda installer.
 - **Install**: requires S_Mike's *Honda Permissions* (XDA, not included). Easy on RC3 to RC6.1 (rename trick); RC7/RC8 need a downgrade to RC6 or iRoot (see the XDA thread). Install guides are in French (PDF in Releases and `docs/`); the steps match the ones from the XDA thread.
@@ -171,4 +179,5 @@ install on the Honda Connect. FK2Play replaces it: it drives the dongle over USB
 - **Not verified yet**: RC5–RC8 and other models, long trips.
 - **Honda Permissions → Process Controls**: keep SoundInterrupt and SoundInterruptMute **OFF**, otherwise steering-wheel volume stops working.
 - **Phone calls**: the car microphone is not reachable by Android apps. Enable *"Appels via le Bluetooth de la voiture"* and keep the iPhone connected to the Honda's HandsFreeLink: music stays on USB, calls use the original hands-free kit.
+- **Hardware decoding** (2.1): check *Settings → Diagnostic → Décodeur vidéo actif* (`Materiel : OMX.Nvidia.h264.decode`). Thanks to MaKi83 for omxvideocodec.
 - **License**: MIT; FFmpeg under LGPL 2.1+. Not affiliated with Apple, Honda or Carlinkit.

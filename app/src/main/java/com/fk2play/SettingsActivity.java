@@ -25,6 +25,8 @@ public class SettingsActivity extends PreferenceActivity {
         android.preference.Preference log = findPreference(MediaKeys.PREF_KEY_LOG);
         String keys = getPreferenceManager().getSharedPreferences().getString(MediaKeys.PREF_KEY_LOG, "");
         if (log != null && !keys.isEmpty()) log.setSummary(keys);
+        android.preference.Preference vd = findPreference("video_decoder_status");
+        if (vd != null) vd.setSummary(com.fk2play.video.VideoPipeline.decoderDiagnostic());
         android.preference.Preference sw = findPreference(HondaSteering.PREF_STATUS);
         String st = getPreferenceManager().getSharedPreferences().getString(HondaSteering.PREF_STATUS, "");
         if (sw != null && !st.isEmpty()) sw.setSummary(st);

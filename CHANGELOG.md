@@ -1,5 +1,33 @@
 # Historique des versions
 
+## 2.1 — 17 novembre 2026 (décodage vidéo matériel, version stable)
+
+- **Validée en voiture** (Civic Type R FK2, RC3) : `Materiel : OMX.Nvidia.h264.decode 800x480`,
+  30 images/s, 0 image jetée ; fluide, prise en charge immédiate, appels et retour depuis la radio OK.
+- Regroupe les essais 2.1-test et 2.1-test2 ci-dessous. Merci à **MaKi83** (OpenDroidAuto) pour
+  omxvideocodec et son accord.
+
+### 2.1-test2 — 17 novembre 2026 (diagnostic du décodeur)
+
+- *Diagnostic → Décodeur vidéo actif* affiche désormais le **dernier décodeur utilisé** (matériel ou
+  logiciel, composant, images affichées/jetées, il y a combien de temps) : l'écran Réglages masque
+  CarPlay, donc aucun décodeur ne tournait au moment de la lecture et la ligne indiquait « aucun ».
+
+### 2.1-test — 16 novembre 2026 (décodeur vidéo matériel, à valider en voiture)
+
+- **Décodage vidéo matériel** : l'image CarPlay (H.264) est décodée par la puce vidéo du Tegra 3
+  (OMX, via libstagefright d'Android 4.0.4) et affichée directement, au lieu d'être décodée en logiciel
+  par FFmpeg. Objectif : processeur beaucoup moins chargé, moins de chauffe, plus de marge.
+  Code basé sur le module **omxvideocodec d'OpenDroidAuto, de MaKi83**, réutilisé avec son accord
+  — merci !
+- **Repli automatique sur FFmpeg** si le décodeur matériel n'est pas disponible ou ne produit pas
+  d'image ; FFmpeg reste aussi utilisé pendant un appel (décodage sans écran) pour le retour
+  instantané, puis le matériel reprend à l'image clé suivante.
+- Réglages : *Vidéo → Décodeur vidéo* (Automatique / Logiciel uniquement) ; *Diagnostic → Décodeur
+  vidéo actif* (composant, images affichées, images jetées, raison d'un éventuel repli).
+- Compilation : `scripts/get_ics_sdk.sh` (en-têtes et bibliothèques AOSP 4.0.4, non publiés) puis
+  `scripts/build_omx.sh`.
+
 ## 2.0 — 16 novembre 2026 (première version stable)
 
 Première version qui n'est plus une bêta : validée en voiture (Civic Type R FK2, Honda Connect RC3,

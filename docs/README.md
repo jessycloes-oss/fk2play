@@ -1,7 +1,7 @@
-# Modes d'emploi FK2Play 1.5-beta
+# Modes d'emploi FK2Play 2.1
 
-> [!WARNING]
-> **Bêta.** Premier essai réel réussi (Civic Type R FK2, RC3). Vos retours sont nécessaires : [rapport de test](../../../issues/new?template=rapport-de-test.yml).
+> [!NOTE]
+> **Version 2.1 stable** (décodage vidéo matériel), validée sur Civic Type R FK2 (RC3). Autres versions et modèles : vos [rapports de test](../../../issues/new?template=rapport-de-test.yml) sont les bienvenus.
 
 | Guide | Pour qui |
 |---|---|

@@ -74,6 +74,12 @@ public class VideoPipeline {
     private volatile boolean useDisplayThread = cpuCores() > 1;
     /** Reglage de diagnostic : null = automatique, sinon force (pris en compte au prochain demarrage du service). */
     public static volatile Boolean forceDisplayThread;
+    /** Reglage « Decodeur video » : true = materiel (Tegra) si possible, false = FFmpeg uniquement. */
+    public static volatile boolean preferHardware = true;
+    /** Decodeur en service, pour l'ecran Diagnostic. */
+    private static volatile VideoDecoder current;
+    /** Retour a l'ecran pendant que FFmpeg decodait : passer au materiel a la prochaine image cle. */
+    private volatile boolean switchToHardware;
     /** Des images ont ete ignorees : l'etat du decodeur ne correspond plus a l'iPhone. */
     private volatile boolean stale = true;
     private volatile boolean waitingKeyframe = true;
@@ -108,9 +114,15 @@ public class VideoPipeline {
                         lastShown = SystemClock.uptimeMillis();
                         Stats.imageReshown();
                     }
+                    if (s != null && preferHardware && OmxDecoder.isAvailable()) {
+                        // FFmpeg a reaffiche la derniere image ; le materiel reprend a la prochaine image cle.
+                        switchToHardware = true;
+                        askKeyframe();
+                    }
                 } else {
-                    decoder.release();
+                    rememberLast(decoder); decoder.release();
                     decoder = null;
+                    current = null;
                     waitingKeyframe = true;
                 }
             }
@@ -193,7 +205,7 @@ public class VideoPipeline {
         }
         synchronized (lock) {
             synchronized (renderLock) {
-                if (decoder != null) { decoder.release(); decoder = null; }
+                if (decoder != null) { rememberLast(decoder); decoder.release(); decoder = null; current = null; }
             }
         }
     }
@@ -280,12 +292,22 @@ public class VideoPipeline {
                 waitingKeyframe = false;
                 keyframeRetries = 0;
             }
+            if (switchToHardware && surface != null && containsIdrOrSps(f.d, f.len)) {
+                switchToHardware = false;
+                if (decoder instanceof FfmpegDecoder && preferHardware && OmxDecoder.isAvailable()) {
+                    synchronized (renderLock) {
+                        rememberLast(decoder); decoder.release();
+                        decoder = null;
+                    }
+                }
+            }
             if (decoder == null || width != f.w || height != f.h) {
               synchronized (renderLock) {
-                if (decoder != null) decoder.release();
+                if (decoder != null) { rememberLast(decoder); decoder.release(); }
                 width = f.w;
                 height = f.h;
                 decoder = createDecoder(surface, width, height);
+                current = decoder;
               }
                 if (decoder == null) {
                     status.onDecoderStatus("Aucun decodeur video disponible !");
@@ -308,9 +330,22 @@ public class VideoPipeline {
             int r = decoder.decode(f.d, 0, f.len, show);
             long dt = System.nanoTime() - t0;
             if (r < 0) {
+                if (decoder instanceof OmxDecoder) {
+                    // Decodeur materiel en panne : repli sur FFmpeg a la prochaine image cle.
+                    synchronized (renderLock) {
+                        rememberLast(decoder); decoder.release();
+                        decoder = null;
+                        current = null;
+                    }
+                    status.onDecoderStatus("Decodeur materiel indisponible : retour au logiciel");
+                }
                 waitingKeyframe = true;
                 askKeyframe();
                 return;
+            }
+            if (decoder instanceof OmxDecoder && ((OmxDecoder) decoder).keyframeWanted) {
+                ((OmxDecoder) decoder).keyframeWanted = false;
+                askKeyframe();
             }
             if (r != VideoDecoder.NOTHING) lastDecoded = now;
             if ((r == VideoDecoder.QUEUED || r == VideoDecoder.REPLACED) && !useDisplayThread) {
@@ -377,7 +412,45 @@ public class VideoPipeline {
         }
     }
 
+    /** Dernier decodeur utilise (l'ecran Reglages cache CarPlay, donc aucun decodeur n'y tourne). */
+    private static volatile String lastUsed;
+    private static volatile long lastUsedAt;
+
+    private static String describe(VideoDecoder d) {
+        if (d instanceof OmxDecoder) return "Materiel : " + ((OmxDecoder) d).info();
+        return "Logiciel : " + d.name();
+    }
+
+    private static void rememberLast(VideoDecoder d) {
+        if (d == null) return;
+        try {
+            lastUsed = describe(d);
+            lastUsedAt = SystemClock.uptimeMillis();
+        } catch (Throwable ignored) { }
+    }
+
+    /** Texte pour l'ecran Diagnostic. */
+    public static String decoderDiagnostic() {
+        VideoDecoder d = current;
+        StringBuilder b = new StringBuilder();
+        if (d != null) {
+            b.append("En cours : ").append(describe(d));
+            if (lastUsed != null && !(d instanceof OmxDecoder)) b.append("\nAvant : ").append(lastUsed);
+        } else if (lastUsed != null) {
+            long s = (SystemClock.uptimeMillis() - lastUsedAt) / 1000;
+            b.append("Dernier utilise (il y a ").append(s < 60 ? s + " s" : (s / 60) + " min").append(") : ")
+                    .append(lastUsed);
+        } else b.append("aucun pour l'instant (afficher CarPlay une fois)");
+        if (!preferHardware) b.append("\nMateriel desactive dans les reglages");
+        else if (OmxDecoder.unavailableReason() != null) b.append("\nMateriel : ").append(OmxDecoder.unavailableReason());
+        return b.toString();
+    }
+
     private static VideoDecoder createDecoder(Surface s, int w, int h) {
+        if (preferHardware && s != null && Build.VERSION.SDK_INT < 16 && OmxDecoder.isAvailable()) {
+            VideoDecoder d = new OmxDecoder();
+            if (d.init(s, w, h)) return d;
+        }
         if (Build.VERSION.SDK_INT >= 16 && s != null) {
             VideoDecoder d = new MediaCodecDecoder();
             if (d.init(s, w, h)) return d;

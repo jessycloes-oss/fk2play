@@ -487,6 +487,7 @@ public class CarPlayService extends Service implements DongleListener,
         c.returnAfterCall = p.getBoolean("return_after_call", true);
         c.adaptiveVideo = p.getBoolean("adaptive_video", true);
         String dt = p.getString("display_thread", "auto");
+        VideoPipeline.preferHardware = !"sw".equals(p.getString("video_decoder", "auto"));
         VideoPipeline.forceDisplayThread = "on".equals(dt) ? Boolean.TRUE : "off".equals(dt) ? Boolean.FALSE : null;
         try {
             com.fk2play.video.FfmpegDecoder.forcedFormat = Integer.parseInt(p.getString("video_format", "0"));

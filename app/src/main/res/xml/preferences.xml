@@ -14,6 +14,13 @@
             android:defaultValue="30"
             android:entries="@array/fps_labels"
             android:entryValues="@array/fps_values" />
+        <ListPreference
+            android:key="video_decoder"
+            android:title="Decodeur video"
+            android:summary="Automatique : decodeur materiel du Tegra 3, repli sur FFmpeg (logiciel) s'il echoue. Pris en compte au prochain demarrage."
+            android:defaultValue="auto"
+            android:entries="@array/video_decoder_labels"
+            android:entryValues="@array/video_decoder_values" />
         <CheckBoxPreference
             android:key="adaptive_video"
             android:title="Fluidite automatique"
@@ -124,6 +131,10 @@
             android:defaultValue="honda"
             android:entries="@array/volume_mode_labels"
             android:entryValues="@array/volume_mode_values" />
+        <Preference
+            android:key="video_decoder_status"
+            android:title="Decodeur video actif"
+            android:summary="Afficher CarPlay une fois, puis revenir ici (le dernier decodeur utilise est memorise)" />
         <Preference
             android:key="honda_sw_status"
             android:title="Service volant Honda"
