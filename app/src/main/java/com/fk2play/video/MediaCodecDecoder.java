@@ -83,6 +83,6 @@ public class MediaCodecDecoder implements VideoDecoder {
 
     @Override
     public String name() {
-        return "MediaCodec (materiel)";
+        return com.fk2play.Tr.s("MediaCodec (materiel)", "MediaCodec (hardware)");
     }
 }

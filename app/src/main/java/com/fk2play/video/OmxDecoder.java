@@ -38,7 +38,7 @@ public class OmxDecoder implements VideoDecoder {
 
     /** Pour le diagnostic : pourquoi le decodeur materiel n'est pas utilise. */
     public static String unavailableReason() {
-        if (!loaded) return "bibliotheque non chargee (" + loadError + ")";
+        if (!loaded) return com.fk2play.Tr.s("bibliotheque non chargee (", "library not loaded (") + loadError + ")";
         if (broken) return brokenReason;
         return null;
     }
@@ -66,10 +66,10 @@ public class OmxDecoder implements VideoDecoder {
         try {
             handle = nativeCreate(surface, width, height, 30, !allowSoftwareOmxForTests);
         } catch (Throwable t) {
-            markBroken("erreur a l'initialisation : " + t);
+            markBroken(com.fk2play.Tr.s("erreur a l'initialisation : ", "initialisation error: ") + t);
             handle = 0;
         }
-        if (handle == 0 && !broken) markBroken("aucun decodeur H.264 materiel sur cet autoradio");
+        if (handle == 0 && !broken) markBroken(com.fk2play.Tr.s("aucun decodeur H.264 materiel sur cet autoradio", "no hardware H.264 decoder on this head unit"));
         return handle != 0;
     }
 
@@ -84,7 +84,7 @@ public class OmxDecoder implements VideoDecoder {
         if (handle == 0) return -1;
         int r = nativeDecode(handle, data, off, len, SystemClock.elapsedRealtime() * 1000L);
         if (r < 0) {
-            markBroken("le decodeur materiel ne repond plus");
+            markBroken(com.fk2play.Tr.s("le decodeur materiel ne repond plus", "the hardware decoder stopped responding"));
             return -1;
         }
         if ((r & 2) != 0) keyframeWanted = true;
@@ -98,7 +98,7 @@ public class OmxDecoder implements VideoDecoder {
         if (fedSinceOutput++ == 0) firstFedWithoutOutput = now;
         if (!everRendered && fedSinceOutput > MAX_FRAMES_WITHOUT_OUTPUT
                 && now - firstFedWithoutOutput > MAX_MS_WITHOUT_OUTPUT) {
-            markBroken("aucune image affichee par le decodeur materiel");
+            markBroken(com.fk2play.Tr.s("aucune image affichee par le decodeur materiel", "no frame shown by the hardware decoder"));
             return -1;
         }
         return NOTHING;
@@ -129,7 +129,7 @@ public class OmxDecoder implements VideoDecoder {
 
     @Override
     public String name() {
-        return "Materiel (Tegra)";
+        return com.fk2play.Tr.s("Materiel (Tegra)", "Hardware (Tegra)");
     }
 
     private static native long nativeCreate(Surface surface, int width, int height, int fps, boolean hwOnly);

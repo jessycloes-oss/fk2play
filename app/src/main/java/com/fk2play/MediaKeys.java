@@ -59,7 +59,7 @@ public final class MediaKeys {
         if ("honda".equals(mode) && svc != null && svc.steering() != null) {
             // Par defaut : la touche est rendue au Honda (volume reel + affichage au tableau de bord).
             svc.steering().giveBackVolume(keyCode);
-            how = "rendu au Honda";
+            how = Tr.s("rendu au Honda", "returned to Honda");
         } else if ("key".equals(mode)) {
             // Variante : touche volume Android standard, traitee par le systeme (Honda compris).
             final int k = up ? KeyEvent.KEYCODE_VOLUME_UP : KeyEvent.KEYCODE_VOLUME_DOWN;
@@ -69,7 +69,7 @@ public final class MediaKeys {
                     catch (Throwable t) { android.util.Log.w("FK2Play", "Volume (touche) impossible", t); }
                 }
             }, "volume-key").start();
-            how = "touche volume";
+            how = Tr.s("touche volume", "volume key");
         } else {
             AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
             am.adjustStreamVolume(AudioManager.STREAM_MUSIC,
@@ -131,13 +131,14 @@ public final class MediaKeys {
     private static void log(Context ctx, int keyCode, String source, int cmd) {
         String name;
         switch (keyCode) {
-            case HONDA_PREV: case -HONDA_PREV: name = "precedent"; break;
-            case HONDA_NEXT: case -HONDA_NEXT: name = "suivant"; break;
+            case HONDA_PREV: case -HONDA_PREV: name = Tr.s("precedent", "previous"); break;
+            case HONDA_NEXT: case -HONDA_NEXT: name = Tr.s("suivant", "next"); break;
             case HONDA_VOL_DOWN: case HONDA_VOL_UP: case -HONDA_VOL_DOWN: case -HONDA_VOL_UP: name = "volume"; break;
             default: name = KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "");
         }
         String line = keyCode + " " + name + " [" + source + "]"
-                + (cmd > 0 ? " -> " + cmd : cmd < 0 || source.contains("rendue") ? "" : " (ignoree)");
+                + (cmd > 0 ? " -> " + cmd : cmd < 0 || source.contains("rendue") || source.contains("returned to") || source.contains("return failed")
+                        ? "" : Tr.s(" (ignoree)", " (ignored)"));
         android.util.Log.i("FK2Play", "Touche " + line);
         try {
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -147,7 +148,7 @@ public final class MediaKeys {
             for (int i = 0; i < prev.length && i < KEY_LOG_MAX - 1; i++) b.append('\n').append(prev[i]);
             p.edit().putString(PREF_KEY_LOG, b.toString()).apply();
             if (p.getBoolean("show_keycodes", false)) {
-                Toast.makeText(ctx.getApplicationContext(), "Touche " + line, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx.getApplicationContext(), Tr.s("Touche ", "Key ") + line, Toast.LENGTH_SHORT).show();
             }
         } catch (RuntimeException ignored) {
         }

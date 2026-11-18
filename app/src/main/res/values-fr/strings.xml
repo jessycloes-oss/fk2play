@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Textes francais (autoradio regle en francais). Les valeurs sont dans values/strings.xml. -->
+    <string name="settings">Reglages FK2Play</string>
+    <string name="starting">Demarrage...</string>
+    <string name="mic_test">Test du micro</string>
+
+    <string-array name="resolution_labels">
+        <item>800 x 480 (ecran natif, recommande)</item>
+        <item>640 x 384 (plus fluide)</item>
+        <item>480 x 288 (secours, tres fluide)</item>
+    </string-array>
+    <string-array name="fps_labels">
+        <item>30 images/s</item>
+        <item>25 images/s</item>
+        <item>20 images/s</item>
+        <item>15 images/s</item>
+    </string-array>
+    <string-array name="display_thread_labels">
+        <item>Automatique (recommande)</item>
+        <item>Oui</item>
+        <item>Non</item>
+    </string-array>
+    <string-array name="video_format_labels">
+        <item>Automatique (recommande)</item>
+        <item>RGB565 (16 bits)</item>
+        <item>RGBX (32 bits)</item>
+    </string-array>
+    <string-array name="mic_source_labels">
+        <item>Automatique</item>
+        <item>MIC</item>
+        <item>VOICE_COMMUNICATION</item>
+        <item>VOICE_RECOGNITION</item>
+        <item>CAMCORDER</item>
+        <item>DEFAULT</item>
+    </string-array>
+    <string-array name="honda_sw_address_labels">
+        <item>260 - Menu (par defaut)</item>
+        <item>258 - Source</item>
+        <item>259 - Affichage</item>
+        <item>263 - En-tete source</item>
+        <item>265 - Lanceur</item>
+        <item>266 - i-MID</item>
+    </string-array>
+    <string-array name="volume_mode_labels">
+        <item>Rendu au Honda (par defaut)</item>
+        <item>Volume du son CarPlay (barre Android)</item>
+        <item>Touche volume Android</item>
+    </string-array>
+    <string-array name="sw_reg_mode_labels">
+        <item>A - inscription + affichage</item>
+        <item>B - inscription seule</item>
+        <item>C - affichage seul (par defaut)</item>
+    </string-array>
+    <string-array name="volume_window_labels">
+        <item>Aucune (reinscription immediate)</item>
+        <item>1 seconde</item>
+        <item>2 secondes</item>
+        <item>3 secondes (par defaut)</item>
+        <item>5 secondes</item>
+        <item>10 secondes</item>
+    </string-array>
+    <string-array name="video_decoder_labels">
+        <item>Automatique (materiel si possible)</item>
+        <item>Logiciel uniquement (FFmpeg)</item>
+    </string-array>
+
+    <!-- Reglages (res/xml/preferences.xml) -->
+    <string name="pref_title_1">Video</string>
+    <string name="pref_title_2">Resolution demandee a l\'iPhone</string>
+    <string name="pref_summary_3">Baisser si l\'image saccade</string>
+    <string name="pref_title_4">Images par seconde</string>
+    <string name="pref_title_5">Decodeur video</string>
+    <string name="pref_summary_6">Automatique : decodeur materiel du Tegra 3, repli sur FFmpeg (logiciel) s\'il echoue. Pris en compte au prochain demarrage.</string>
+    <string name="pref_title_7">Fluidite automatique</string>
+    <string name="pref_summary_8">Allege le decodage quand l\'autoradio est charge (image un peu moins fine pendant ce temps)</string>
+    <string name="pref_title_9">Mode nuit CarPlay</string>
+    <string name="pref_title_10">Audio</string>
+    <string name="pref_title_11">Touches musique du volant</string>
+    <string name="pref_summary_12">Piste suivante / precedente au volant quand l\'ecran CarPlay est affiche</string>
+    <string name="pref_title_13">Adresse volant Honda</string>
+    <string name="pref_summary_14">A changer seulement si les touches gauche / droite ne reagissent pas (260 par defaut)</string>
+    <string name="pref_title_15">Appels via le Bluetooth de la voiture</string>
+    <string name="pref_summary_16">Musique par USB, appels par le kit mains libres d\'origine (micro et touches du volant). L\'iPhone doit rester connecte a HandsFreeLink.</string>
+    <string name="pref_title_17">Revenir a CarPlay des la fin d\'un appel</string>
+    <string name="pref_summary_18">Sans attendre que le Honda quitte son ecran telephone</string>
+    <string name="pref_title_19">Son CarPlay via l\'autoradio (USB)</string>
+    <string name="pref_summary_20">Decocher pour laisser le son passer en Bluetooth</string>
+    <string name="pref_title_21">Utiliser le micro de la voiture</string>
+    <string name="pref_summary_22">Decocher si votre dongle a un micro integre</string>
+    <string name="pref_title_23">Tester le micro de la voiture</string>
+    <string name="pref_summary_24">Trouve automatiquement le bon reglage (parlez pendant le test)</string>
+    <string name="pref_title_25">Source du micro</string>
+    <string name="pref_summary_26">Rempli par le test du micro</string>
+    <string name="pref_title_27">Diagnostic</string>
+    <string name="pref_title_28">Affichage sur un 2e coeur</string>
+    <string name="pref_summary_29">Automatique : oui si le processeur a plusieurs coeurs (Tegra 3). Pris en compte au prochain demarrage.</string>
+    <string name="pref_title_30">Format d\'affichage</string>
+    <string name="pref_summary_31">Automatique : FK2Play mesure le plus rapide au demarrage</string>
+    <string name="pref_title_32">Afficher le code des touches</string>
+    <string name="pref_summary_33">Bulle a chaque touche du volant recue (numero et commande envoyee)</string>
+    <string name="pref_title_34">Inverser volume + / -</string>
+    <string name="pref_summary_35">Si les touches volume du volant marchent a l\'envers sur l\'ecran CarPlay</string>
+    <string name="pref_title_36">Mode d\'inscription volant</string>
+    <string name="pref_summary_37">C (par defaut) : volume gere par le Honda, touches piste pour CarPlay</string>
+    <string name="pref_title_38">Fenetre volume</string>
+    <string name="pref_summary_39">Apres un appui volume, le Honda garde le volume pendant ce temps (appuis suivants instantanes)</string>
+    <string name="pref_title_40">Inverser suivant / precedent</string>
+    <string name="pref_summary_41">Si les touches piste du volant marchent a l\'envers</string>
+    <string name="pref_title_42">Methode du volume au volant</string>
+    <string name="pref_summary_43">Si le volume ne change pas sur l\'ecran CarPlay, essayer l\'autre methode</string>
+    <string name="pref_title_44">Decodeur video actif</string>
+    <string name="pref_summary_45">Afficher CarPlay une fois, puis revenir ici (le dernier decodeur utilise est memorise)</string>
+    <string name="pref_title_46">Service volant Honda</string>
+    <string name="pref_summary_47">Pas encore contacte</string>
+    <string name="pref_title_48">Dernieres touches recues</string>
+    <string name="pref_summary_49">Aucune pour l\'instant</string>
+    <string name="pref_title_50">Connexion</string>
+    <string name="pref_title_51">Wi-Fi 5 GHz (sans fil)</string>
+    <string name="pref_summary_52">Decocher pour 2,4 GHz en cas de coupures</string>
+    <string name="pref_title_53">Conduite a droite (UK)</string>
+</resources>

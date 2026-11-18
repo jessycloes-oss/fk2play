@@ -1,7 +1,9 @@
-# Modes d'emploi FK2Play 2.1
+# Modes d'emploi FK2Play 2.2
+
+> **English:** [User_guide_FK2Play_all_versions.pdf](en/User_guide_FK2Play_all_versions.pdf) (RC3 to RC8) · [User_guide_FK2Play_RC3.pdf](en/User_guide_FK2Play_RC3.pdf) (illustrated, RC3).
 
 > [!NOTE]
-> **Version 2.1 stable** (décodage vidéo matériel), validée sur Civic Type R FK2 (RC3). Autres versions et modèles : vos [rapports de test](../../../issues/new?template=rapport-de-test.yml) sont les bienvenus.
+> **Version 2.2 stable** (interface en anglais ; décodage vidéo matériel depuis la 2.1), validée sur Civic Type R FK2 (RC3). Autres versions et modèles : vos [rapports de test](../../../issues/new?template=rapport-de-test.yml) sont les bienvenus.
 
 | Guide | Pour qui |
 |---|---|

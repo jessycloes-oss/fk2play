@@ -1,158 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Video">
+    <PreferenceCategory android:title="@string/pref_title_1">
         <ListPreference
             android:key="resolution"
-            android:title="Resolution demandee a l'iPhone"
-            android:summary="Baisser si l'image saccade"
+            android:title="@string/pref_title_2"
+            android:summary="@string/pref_summary_3"
             android:defaultValue="800x480"
             android:entries="@array/resolution_labels"
             android:entryValues="@array/resolution_values" />
         <ListPreference
             android:key="fps"
-            android:title="Images par seconde"
+            android:title="@string/pref_title_4"
             android:defaultValue="30"
             android:entries="@array/fps_labels"
             android:entryValues="@array/fps_values" />
         <ListPreference
             android:key="video_decoder"
-            android:title="Decodeur video"
-            android:summary="Automatique : decodeur materiel du Tegra 3, repli sur FFmpeg (logiciel) s'il echoue. Pris en compte au prochain demarrage."
+            android:title="@string/pref_title_5"
+            android:summary="@string/pref_summary_6"
             android:defaultValue="auto"
             android:entries="@array/video_decoder_labels"
             android:entryValues="@array/video_decoder_values" />
         <CheckBoxPreference
             android:key="adaptive_video"
-            android:title="Fluidite automatique"
-            android:summary="Allege le decodage quand l'autoradio est charge (image un peu moins fine pendant ce temps)"
+            android:title="@string/pref_title_7"
+            android:summary="@string/pref_summary_8"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="night_mode"
-            android:title="Mode nuit CarPlay"
+            android:title="@string/pref_title_9"
             android:defaultValue="false" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Audio">
+    <PreferenceCategory android:title="@string/pref_title_10">
         <CheckBoxPreference
             android:key="media_keys"
-            android:title="Touches musique du volant"
-            android:summary="Piste suivante / precedente au volant quand l'ecran CarPlay est affiche"
+            android:title="@string/pref_title_11"
+            android:summary="@string/pref_summary_12"
             android:defaultValue="true" />
         <ListPreference
             android:key="honda_sw_address"
             android:dependency="media_keys"
-            android:title="Adresse volant Honda"
-            android:summary="A changer seulement si les touches gauche / droite ne reagissent pas (260 par defaut)"
+            android:title="@string/pref_title_13"
+            android:summary="@string/pref_summary_14"
             android:defaultValue="260"
             android:entries="@array/honda_sw_address_labels"
             android:entryValues="@array/honda_sw_address_values" />
         <CheckBoxPreference
             android:key="calls_car_bt"
-            android:title="Appels via le Bluetooth de la voiture"
-            android:summary="Musique par USB, appels par le kit mains libres d'origine (micro et touches du volant). L'iPhone doit rester connecte a HandsFreeLink."
+            android:title="@string/pref_title_15"
+            android:summary="@string/pref_summary_16"
             android:defaultValue="false" />
         <CheckBoxPreference
             android:key="return_after_call"
-            android:title="Revenir a CarPlay des la fin d'un appel"
-            android:summary="Sans attendre que le Honda quitte son ecran telephone"
+            android:title="@string/pref_title_17"
+            android:summary="@string/pref_summary_18"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="audio_usb"
-            android:title="Son CarPlay via l'autoradio (USB)"
-            android:summary="Decocher pour laisser le son passer en Bluetooth"
+            android:title="@string/pref_title_19"
+            android:summary="@string/pref_summary_20"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="car_mic"
-            android:title="Utiliser le micro de la voiture"
-            android:summary="Decocher si votre dongle a un micro integre"
+            android:title="@string/pref_title_21"
+            android:summary="@string/pref_summary_22"
             android:defaultValue="true" />
         <Preference
-            android:title="Tester le micro de la voiture"
-            android:summary="Trouve automatiquement le bon reglage (parlez pendant le test)">
+            android:title="@string/pref_title_23"
+            android:summary="@string/pref_summary_24">
             <intent
                 android:targetPackage="com.fk2play"
                 android:targetClass="com.fk2play.MicTestActivity" />
         </Preference>
         <ListPreference
             android:key="mic_source"
-            android:title="Source du micro"
-            android:summary="Rempli par le test du micro"
+            android:title="@string/pref_title_25"
+            android:summary="@string/pref_summary_26"
             android:defaultValue="auto"
             android:entries="@array/mic_source_labels"
             android:entryValues="@array/mic_source_values" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Diagnostic">
+    <PreferenceCategory android:title="@string/pref_title_27">
         <ListPreference
             android:key="display_thread"
-            android:title="Affichage sur un 2e coeur"
-            android:summary="Automatique : oui si le processeur a plusieurs coeurs (Tegra 3). Pris en compte au prochain demarrage."
+            android:title="@string/pref_title_28"
+            android:summary="@string/pref_summary_29"
             android:defaultValue="auto"
             android:entries="@array/display_thread_labels"
             android:entryValues="@array/display_thread_values" />
         <ListPreference
             android:key="video_format"
-            android:title="Format d'affichage"
-            android:summary="Automatique : FK2Play mesure le plus rapide au demarrage"
+            android:title="@string/pref_title_30"
+            android:summary="@string/pref_summary_31"
             android:defaultValue="0"
             android:entries="@array/video_format_labels"
             android:entryValues="@array/video_format_values" />
         <CheckBoxPreference
             android:key="show_keycodes"
-            android:title="Afficher le code des touches"
-            android:summary="Bulle a chaque touche du volant recue (numero et commande envoyee)"
+            android:title="@string/pref_title_32"
+            android:summary="@string/pref_summary_33"
             android:defaultValue="false" />
         <CheckBoxPreference
             android:key="volume_invert"
-            android:title="Inverser volume + / -"
-            android:summary="Si les touches volume du volant marchent a l'envers sur l'ecran CarPlay"
+            android:title="@string/pref_title_34"
+            android:summary="@string/pref_summary_35"
             android:defaultValue="false" />
         <ListPreference
             android:key="sw_reg_mode"
-            android:title="Mode d'inscription volant"
-            android:summary="C (par defaut) : volume gere par le Honda, touches piste pour CarPlay"
+            android:title="@string/pref_title_36"
+            android:summary="@string/pref_summary_37"
             android:defaultValue="C"
             android:entries="@array/sw_reg_mode_labels"
             android:entryValues="@array/sw_reg_mode_values" />
         <ListPreference
             android:key="volume_window"
-            android:title="Fenetre volume"
-            android:summary="Apres un appui volume, le Honda garde le volume pendant ce temps (appuis suivants instantanes)"
+            android:title="@string/pref_title_38"
+            android:summary="@string/pref_summary_39"
             android:defaultValue="3"
             android:entries="@array/volume_window_labels"
             android:entryValues="@array/volume_window_values" />
         <CheckBoxPreference
             android:key="track_invert"
-            android:title="Inverser suivant / precedent"
-            android:summary="Si les touches piste du volant marchent a l'envers"
+            android:title="@string/pref_title_40"
+            android:summary="@string/pref_summary_41"
             android:defaultValue="false" />
         <ListPreference
             android:key="volume_mode"
-            android:title="Methode du volume au volant"
-            android:summary="Si le volume ne change pas sur l'ecran CarPlay, essayer l'autre methode"
+            android:title="@string/pref_title_42"
+            android:summary="@string/pref_summary_43"
             android:defaultValue="honda"
             android:entries="@array/volume_mode_labels"
             android:entryValues="@array/volume_mode_values" />
         <Preference
             android:key="video_decoder_status"
-            android:title="Decodeur video actif"
-            android:summary="Afficher CarPlay une fois, puis revenir ici (le dernier decodeur utilise est memorise)" />
+            android:title="@string/pref_title_44"
+            android:summary="@string/pref_summary_45" />
         <Preference
             android:key="honda_sw_status"
-            android:title="Service volant Honda"
-            android:summary="Pas encore contacte" />
+            android:title="@string/pref_title_46"
+            android:summary="@string/pref_summary_47" />
         <Preference
             android:key="key_log"
-            android:title="Dernieres touches recues"
-            android:summary="Aucune pour l'instant" />
+            android:title="@string/pref_title_48"
+            android:summary="@string/pref_summary_49" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Connexion">
+    <PreferenceCategory android:title="@string/pref_title_50">
         <CheckBoxPreference
             android:key="wifi_5g"
-            android:title="Wi-Fi 5 GHz (sans fil)"
-            android:summary="Decocher pour 2,4 GHz en cas de coupures"
+            android:title="@string/pref_title_51"
+            android:summary="@string/pref_summary_52"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="right_hand_drive"
-            android:title="Conduite a droite (UK)"
+            android:title="@string/pref_title_53"
             android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

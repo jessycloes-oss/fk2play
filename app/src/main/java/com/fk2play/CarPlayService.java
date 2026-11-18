@@ -75,7 +75,7 @@ public class CarPlayService extends Service implements DongleListener,
     private static final long BRING_BACK_RETRY_MS = 1500;
     /** Decodage en arriere-plan conserve quelques secondes apres l'appel, le temps du retour. */
     private static final long BACKGROUND_DECODE_GRACE_MS = 4000;
-    private volatile String baseStatus = "Connexion au dongle...";
+    private volatile String baseStatus = Tr.s("Connexion au dongle...", "Connecting to the dongle...");
     private boolean permissionPending;
     private boolean connecting;
     private DongleSession lastSession;
@@ -133,7 +133,7 @@ public class CarPlayService extends Service implements DongleListener,
         Notification n = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("FK2Play")
-                .setContentText("CarPlay actif - toucher pour revenir")
+                .setContentText(Tr.s("CarPlay actif - toucher pour revenir", "CarPlay active - tap to return"))
                 .setContentIntent(pi)
                 .setOngoing(true)
                 .getNotification();
@@ -200,14 +200,14 @@ public class CarPlayService extends Service implements DongleListener,
         }
         UsbDevice dongle = findDongle();
         if (dongle == null) {
-            status("Branchez le dongle CarPlay sur le port USB...\n" + usbDiagnostic(), true, false);
+            status(Tr.s("Branchez le dongle CarPlay sur le port USB...\n", "Plug the CarPlay dongle into the USB port...\n") + usbDiagnostic(), true, false);
             handler.postDelayed(retry, RETRY_MS);
             return;
         }
         if (!usb.hasPermission(dongle)) {
             if (!permissionPending) {
                 permissionPending = true;
-                status("Autorisez l'acces au dongle USB", true, false);
+                status(Tr.s("Autorisez l'acces au dongle USB", "Allow access to the USB dongle"), true, false);
                 PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 usb.requestPermission(dongle, pi);
             }
@@ -301,13 +301,13 @@ public class CarPlayService extends Service implements DongleListener,
     private String usbDiagnostic() {
         try {
             boolean host = getPackageManager().hasSystemFeature(PackageManager.FEATURE_USB_HOST);
-            StringBuilder sb = new StringBuilder("[USB hote Android : ").append(host ? "oui" : "NON");
+            StringBuilder sb = new StringBuilder(Tr.s("[USB hote Android : ", "[Android USB host: ")).append(host ? Tr.s("oui", "yes") : Tr.s("NON", "NO"));
             int n = 0;
             for (UsbDevice d : usb.getDeviceList().values()) {
-                if (n++ < 4) sb.append(n == 1 ? " | vus : " : ", ")
+                if (n++ < 4) sb.append(n == 1 ? Tr.s(" | vus : ", " | seen: ") : ", ")
                         .append(String.format("%04x:%04x", d.getVendorId(), d.getProductId()));
             }
-            if (n == 0) sb.append(" | aucun peripherique vu");
+            if (n == 0) sb.append(Tr.s(" | aucun peripherique vu", " | no device seen"));
             return sb.append("]").toString();
         } catch (Exception e) {
             return "[USB : " + e + "]";
@@ -320,7 +320,7 @@ public class CarPlayService extends Service implements DongleListener,
             if (ACTION_USB_PERMISSION.equals(i.getAction())) {
                 permissionPending = false;
                 if (i.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) connect();
-                else status("Permission USB refusee", true, false);
+                else status(Tr.s("Permission USB refusee", "USB permission denied"), true, false);
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(i.getAction())) {
                 UsbDevice d = (UsbDevice) i.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (UsbTransport.isDongle(d)) {
@@ -330,7 +330,7 @@ public class CarPlayService extends Service implements DongleListener,
                         // Le rebranchement relancera FK2Play automatiquement.
                         stopSelf();
                     } else {
-                        status("Dongle debranche", true, false);
+                        status(Tr.s("Dongle debranche", "Dongle unplugged"), true, false);
                         handler.postDelayed(retry, RETRY_MS);
                     }
                 }
@@ -342,7 +342,8 @@ public class CarPlayService extends Service implements DongleListener,
 
     @Override
     public void onPhoneConnected(int phoneType, boolean wireless) {
-        String s = phoneType == 3 ? "CarPlay connecte" + (wireless ? " (sans fil)" : "") : "Telephone connecte";
+        String s = phoneType == 3 ? Tr.s("CarPlay connecte", "CarPlay connected") + (wireless ? Tr.s(" (sans fil)", " (wireless)") : "")
+                : Tr.s("Telephone connecte", "Phone connected");
         baseStatus = null;
         status(s, false, true);
     }
@@ -351,7 +352,7 @@ public class CarPlayService extends Service implements DongleListener,
     public void onPhoneDisconnected() {
         audio.stopAll();
         videoActive = false;
-        status("iPhone deconnecte - en attente...", true, false);
+        status(Tr.s("iPhone deconnecte - en attente...", "iPhone disconnected - waiting..."), true, false);
     }
 
     @Override
@@ -429,7 +430,7 @@ public class CarPlayService extends Service implements DongleListener,
     @Override
     public void onStatus(String message) {
         android.util.Log.i("FK2Play", message);
-        if (message.startsWith("Dongle initialise")) {
+        if (message.startsWith(DongleSession.READY_PREFIX_FR) || message.startsWith(DongleSession.READY_PREFIX_EN)) {
             status(message, true, false);
             handler.post(claimMediaKeys);
         }
@@ -441,7 +442,7 @@ public class CarPlayService extends Service implements DongleListener,
         android.util.Log.w("FK2Play", "Erreur session", e);
         videoActive = false;
         inCall = false;
-        status("Erreur : " + e.getMessage() + " - nouvelle tentative...", true, false);
+        status(Tr.s("Erreur : ", "Error: ") + e.getMessage() + Tr.s(" - nouvelle tentative...", " - retrying..."), true, false);
         handler.post(new Runnable() {
             public void run() {
                 disconnect();
@@ -459,7 +460,7 @@ public class CarPlayService extends Service implements DongleListener,
     @Override
     public void onDecoderStatus(String s) {
         android.util.Log.i("FK2Play", s);
-        if (s.startsWith("Aucun")) status(s, true, false);
+        if (s.startsWith(VideoPipeline.NO_DECODER_FR) || s.startsWith(VideoPipeline.NO_DECODER_EN)) status(s, true, false);
     }
 
     private void status(String s, boolean permanent, boolean force) {

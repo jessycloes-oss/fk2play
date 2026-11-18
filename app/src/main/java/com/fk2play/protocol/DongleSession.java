@@ -10,6 +10,9 @@ import java.util.ArrayDeque;
  * toutes les 2 s, lecture et distribution des messages.
  */
 public class DongleSession {
+    /** Debut du message d'etat "dongle pret" (FR / EN), reconnu par CarPlayService. */
+    public static final String READY_PREFIX_FR = "Dongle initialise";
+    public static final String READY_PREFIX_EN = "Dongle initialized";
     private static final long HEARTBEAT_MS = 2000;
 
     private final Transport transport;
@@ -68,7 +71,7 @@ public class DongleSession {
         send(Messages.command(c.wifi5g ? Msg.CMD_WIFI_5G : Msg.CMD_WIFI_24G));
         send(Messages.command(c.useCarMic ? Msg.CMD_MIC_CAR : Msg.CMD_MIC_BOX));
         send(Messages.command(c.audioOverUsb ? Msg.CMD_AUDIO_TRANSFER_OFF : Msg.CMD_AUDIO_TRANSFER_ON));
-        listener.onStatus("Dongle initialise, en attente de l'iPhone...");
+        listener.onStatus(com.fk2play.Tr.fr() ? READY_PREFIX_FR + ", en attente de l'iPhone..." : READY_PREFIX_EN + ", waiting for the iPhone...");
         // Demande de connexion auto au dernier iPhone apparie (sans fil)
         new Thread(new Runnable() {
             public void run() {
@@ -252,15 +255,15 @@ public class DongleSession {
             }
             case Msg.PHASE: {
                 int phase = len >= 4 ? b.getInt() : -1;
-                listener.onStatus("Phase dongle : " + phase);
+                listener.onStatus(com.fk2play.Tr.s("Phase dongle : ", "Dongle phase: ") + phase);
                 break;
             }
             case Msg.SOFTWARE_VERSION:
-                listener.onStatus("Firmware dongle : " + new String(p, 0, len).trim());
+                listener.onStatus(com.fk2play.Tr.s("Firmware dongle : ", "Dongle firmware: ") + new String(p, 0, len).trim());
                 break;
             case Msg.WIFI_DEVICE_NAME:
             case Msg.BT_DEVICE_NAME:
-                listener.onStatus("Appareil : " + new String(p, 0, len).trim());
+                listener.onStatus(com.fk2play.Tr.s("Appareil : ", "Device: ") + new String(p, 0, len).trim());
                 break;
             default:
                 // HEARTBEAT, COMMAND, MEDIA_DATA, etc. : ignores

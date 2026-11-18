@@ -45,9 +45,9 @@ public class UsbTransport implements Transport {
             }
             if (a != null && b != null) { found = itf; epIn = a; epOut = b; }
         }
-        if (found == null) throw new IOException("Aucune interface bulk trouvee sur le dongle");
+        if (found == null) throw new IOException(com.fk2play.Tr.s("Aucune interface bulk trouvee sur le dongle", "No bulk interface found on the dongle"));
         UsbDeviceConnection c = manager.openDevice(device);
-        if (c == null) throw new IOException("Impossible d'ouvrir le dongle (permission USB ?)");
+        if (c == null) throw new IOException(com.fk2play.Tr.s("Impossible d'ouvrir le dongle (permission USB ?)", "Cannot open the dongle (USB permission?)"));
         if (!c.claimInterface(found, true)) {
             c.close();
             throw new IOException("claimInterface a echoue");
@@ -90,7 +90,7 @@ public class UsbTransport implements Transport {
                 long ms = (System.nanoTime() - t0) / 1000000L;
                 if (ms < READ_TIMEOUT_MS / 2) {
                     if (++fastFailures >= MAX_FAST_FAILURES) {
-                        throw new IOException("Lecture USB echouee (dongle debranche ?)");
+                        throw new IOException(com.fk2play.Tr.s("Lecture USB echouee (dongle debranche ?)", "USB read failed (dongle unplugged?)"));
                     }
                 } else {
                     fastFailures = 0;
@@ -117,7 +117,7 @@ public class UsbTransport implements Transport {
                 System.arraycopy(data, done, tmp, 0, want);
                 n = conn.bulkTransfer(out, tmp, want, 1000);
             }
-            if (n < 0) throw new IOException("Ecriture USB echouee");
+            if (n < 0) throw new IOException(com.fk2play.Tr.s("Ecriture USB echouee", "USB write failed"));
             done += n;
         }
     }

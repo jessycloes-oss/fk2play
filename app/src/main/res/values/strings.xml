@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Default texts in English. French: values-fr/strings.xml -->
     <string name="app_name">FK2Play</string>
-    <string name="settings">Reglages FK2Play</string>
-    <string name="starting">Demarrage...</string>
+    <string name="settings">FK2Play settings</string>
+    <string name="starting">Starting...</string>
+    <string name="mic_test">Microphone test</string>
 
     <string-array name="resolution_labels">
-        <item>800 x 480 (ecran natif, recommande)</item>
-        <item>640 x 384 (plus fluide)</item>
-        <item>480 x 288 (secours, tres fluide)</item>
+        <item>800 x 480 (native screen, recommended)</item>
+        <item>640 x 384 (smoother)</item>
+        <item>480 x 288 (fallback, very smooth)</item>
     </string-array>
     <string-array name="resolution_values">
         <item>800x480</item>
@@ -15,10 +17,10 @@
         <item>480x288</item>
     </string-array>
     <string-array name="fps_labels">
-        <item>30 images/s</item>
-        <item>25 images/s</item>
-        <item>20 images/s</item>
-        <item>15 images/s</item>
+        <item>30 fps</item>
+        <item>25 fps</item>
+        <item>20 fps</item>
+        <item>15 fps</item>
     </string-array>
     <string-array name="fps_values">
         <item>30</item>
@@ -27,9 +29,9 @@
         <item>15</item>
     </string-array>
     <string-array name="display_thread_labels">
-        <item>Automatique (recommande)</item>
-        <item>Oui</item>
-        <item>Non</item>
+        <item>Automatic (recommended)</item>
+        <item>Yes</item>
+        <item>No</item>
     </string-array>
     <string-array name="display_thread_values">
         <item>auto</item>
@@ -37,9 +39,9 @@
         <item>off</item>
     </string-array>
     <string-array name="video_format_labels">
-        <item>Automatique (recommande)</item>
-        <item>RGB565 (16 bits)</item>
-        <item>RGBX (32 bits)</item>
+        <item>Automatic (recommended)</item>
+        <item>RGB565 (16-bit)</item>
+        <item>RGBX (32-bit)</item>
     </string-array>
     <string-array name="video_format_values">
         <item>0</item>
@@ -47,7 +49,7 @@
         <item>2</item>
     </string-array>
     <string-array name="mic_source_labels">
-        <item>Automatique</item>
+        <item>Automatic</item>
         <item>MIC</item>
         <item>VOICE_COMMUNICATION</item>
         <item>VOICE_RECOGNITION</item>
@@ -63,11 +65,11 @@
         <item>0</item>
     </string-array>
     <string-array name="honda_sw_address_labels">
-        <item>260 - Menu (par defaut)</item>
+        <item>260 - Menu (default)</item>
         <item>258 - Source</item>
-        <item>259 - Affichage</item>
-        <item>263 - En-tete source</item>
-        <item>265 - Lanceur</item>
+        <item>259 - Display</item>
+        <item>263 - Source header</item>
+        <item>265 - Launcher</item>
         <item>266 - i-MID</item>
     </string-array>
     <string-array name="honda_sw_address_values">
@@ -79,9 +81,9 @@
         <item>266</item>
     </string-array>
     <string-array name="volume_mode_labels">
-        <item>Rendu au Honda (par defaut)</item>
-        <item>Volume du son CarPlay (barre Android)</item>
-        <item>Touche volume Android</item>
+        <item>Returned to the Honda (default)</item>
+        <item>CarPlay sound volume (Android bar)</item>
+        <item>Android volume key</item>
     </string-array>
     <string-array name="volume_mode_values">
         <item>honda</item>
@@ -89,9 +91,9 @@
         <item>key</item>
     </string-array>
     <string-array name="sw_reg_mode_labels">
-        <item>A - inscription + affichage</item>
-        <item>B - inscription seule</item>
-        <item>C - affichage seul (par defaut)</item>
+        <item>A - registration + display</item>
+        <item>B - registration only</item>
+        <item>C - display only (default)</item>
     </string-array>
     <string-array name="sw_reg_mode_values">
         <item>A</item>
@@ -99,12 +101,12 @@
         <item>C</item>
     </string-array>
     <string-array name="volume_window_labels">
-        <item>Aucune (reinscription immediate)</item>
-        <item>1 seconde</item>
-        <item>2 secondes</item>
-        <item>3 secondes (par defaut)</item>
-        <item>5 secondes</item>
-        <item>10 secondes</item>
+        <item>None (immediate re-registration)</item>
+        <item>1 second</item>
+        <item>2 seconds</item>
+        <item>3 seconds (default)</item>
+        <item>5 seconds</item>
+        <item>10 seconds</item>
     </string-array>
     <string-array name="volume_window_values">
         <item>0</item>
@@ -115,11 +117,66 @@
         <item>10</item>
     </string-array>
     <string-array name="video_decoder_labels">
-        <item>Automatique (materiel si possible)</item>
-        <item>Logiciel uniquement (FFmpeg)</item>
+        <item>Automatic (hardware if possible)</item>
+        <item>Software only (FFmpeg)</item>
     </string-array>
     <string-array name="video_decoder_values">
         <item>auto</item>
         <item>sw</item>
     </string-array>
+
+    <!-- Reglages (res/xml/preferences.xml) -->
+    <string name="pref_title_1">Video</string>
+    <string name="pref_title_2">Resolution requested from the iPhone</string>
+    <string name="pref_summary_3">Lower it if the picture stutters</string>
+    <string name="pref_title_4">Frames per second</string>
+    <string name="pref_title_5">Video decoder</string>
+    <string name="pref_summary_6">Automatic: Tegra 3 hardware decoder, falls back to FFmpeg (software) if it fails. Applied at next start.</string>
+    <string name="pref_title_7">Automatic smoothness</string>
+    <string name="pref_summary_8">Lightens decoding when the head unit is busy (slightly softer picture meanwhile)</string>
+    <string name="pref_title_9">CarPlay night mode</string>
+    <string name="pref_title_10">Audio</string>
+    <string name="pref_title_11">Steering wheel music buttons</string>
+    <string name="pref_summary_12">Next / previous track from the wheel while the CarPlay screen is shown</string>
+    <string name="pref_title_13">Honda steering wheel address</string>
+    <string name="pref_summary_14">Change only if the left / right buttons do not respond (260 by default)</string>
+    <string name="pref_title_15">Calls through the car Bluetooth</string>
+    <string name="pref_summary_16">Music over USB, calls through the stock hands-free kit (microphone and wheel buttons). The iPhone must stay connected to HandsFreeLink.</string>
+    <string name="pref_title_17">Return to CarPlay as soon as a call ends</string>
+    <string name="pref_summary_18">Without waiting for the Honda to leave its phone screen</string>
+    <string name="pref_title_19">CarPlay sound through the head unit (USB)</string>
+    <string name="pref_summary_20">Untick to let the sound go over Bluetooth</string>
+    <string name="pref_title_21">Use the car microphone</string>
+    <string name="pref_summary_22">Untick if your dongle has a built-in microphone</string>
+    <string name="pref_title_23">Test the car microphone</string>
+    <string name="pref_summary_24">Finds the right setting automatically (talk during the test)</string>
+    <string name="pref_title_25">Microphone source</string>
+    <string name="pref_summary_26">Filled in by the microphone test</string>
+    <string name="pref_title_27">Diagnostics</string>
+    <string name="pref_title_28">Display on a 2nd core</string>
+    <string name="pref_summary_29">Automatic: yes if the processor has several cores (Tegra 3). Applied at next start.</string>
+    <string name="pref_title_30">Display format</string>
+    <string name="pref_summary_31">Automatic: FK2Play measures the fastest one at start</string>
+    <string name="pref_title_32">Show key codes</string>
+    <string name="pref_summary_33">Pop-up for each steering wheel key received (code and command sent)</string>
+    <string name="pref_title_34">Swap volume + / -</string>
+    <string name="pref_summary_35">If the wheel volume buttons work the wrong way round on the CarPlay screen</string>
+    <string name="pref_title_36">Steering wheel registration mode</string>
+    <string name="pref_summary_37">C (default): volume handled by the Honda, track buttons for CarPlay</string>
+    <string name="pref_title_38">Volume window</string>
+    <string name="pref_summary_39">After a volume press, the Honda keeps the volume for this long (next presses are instant)</string>
+    <string name="pref_title_40">Swap next / previous</string>
+    <string name="pref_summary_41">If the wheel track buttons work the wrong way round</string>
+    <string name="pref_title_42">Steering wheel volume method</string>
+    <string name="pref_summary_43">If the volume does not change on the CarPlay screen, try the other method</string>
+    <string name="pref_title_44">Active video decoder</string>
+    <string name="pref_summary_45">Show CarPlay once, then come back here (the last decoder used is remembered)</string>
+    <string name="pref_title_46">Honda steering wheel service</string>
+    <string name="pref_summary_47">Not contacted yet</string>
+    <string name="pref_title_48">Last keys received</string>
+    <string name="pref_summary_49">None yet</string>
+    <string name="pref_title_50">Connection</string>
+    <string name="pref_title_51">5 GHz Wi-Fi (wireless)</string>
+    <string name="pref_summary_52">Untick for 2.4 GHz if the connection drops</string>
+    <string name="pref_title_53">Right-hand drive (UK)</string>
 </resources>

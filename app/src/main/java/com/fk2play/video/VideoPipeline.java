@@ -25,6 +25,9 @@ import java.util.concurrent.TimeUnit;
  * - Si l'image cle demandee n'arrive pas, elle est redemandee.
  */
 public class VideoPipeline {
+    /** Debut du message "aucun decodeur" (FR / EN), affiche en permanence par CarPlayService. */
+    public static final String NO_DECODER_FR = "Aucun decodeur";
+    public static final String NO_DECODER_EN = "No video decoder";
     public interface KeyframeRequester {
         void requestKeyframe();
     }
@@ -310,12 +313,12 @@ public class VideoPipeline {
                 current = decoder;
               }
                 if (decoder == null) {
-                    status.onDecoderStatus("Aucun decodeur video disponible !");
+                    status.onDecoderStatus(com.fk2play.Tr.s(NO_DECODER_FR + " video disponible !", NO_DECODER_EN + " available!"));
                     running = false;
                     return;
                 }
                 fast = false;
-                status.onDecoderStatus("Decodeur : " + decoder.name() + " " + width + "x" + height);
+                status.onDecoderStatus(com.fk2play.Tr.s("Decodeur : ", "Decoder: ") + decoder.name() + " " + width + "x" + height);
             }
             long now = SystemClock.uptimeMillis();
             int backlog = queue.size();
@@ -337,7 +340,7 @@ public class VideoPipeline {
                         decoder = null;
                         current = null;
                     }
-                    status.onDecoderStatus("Decodeur materiel indisponible : retour au logiciel");
+                    status.onDecoderStatus(com.fk2play.Tr.s("Decodeur materiel indisponible : retour au logiciel", "Hardware decoder unavailable: back to software"));
                 }
                 waitingKeyframe = true;
                 askKeyframe();
@@ -384,7 +387,7 @@ public class VideoPipeline {
         long now = System.currentTimeMillis();
         if (now - lastFpsTime > 5000) {
             if (lastFpsTime != 0) {
-                status.onDecoderStatus(String.format("%.1f i/s", frames * 1000f / (now - lastFpsTime)));
+                status.onDecoderStatus(String.format(com.fk2play.Tr.s("%.1f i/s", "%.1f fps"), frames * 1000f / (now - lastFpsTime)));
             }
             frames = 0;
             lastFpsTime = now;
@@ -417,8 +420,8 @@ public class VideoPipeline {
     private static volatile long lastUsedAt;
 
     private static String describe(VideoDecoder d) {
-        if (d instanceof OmxDecoder) return "Materiel : " + ((OmxDecoder) d).info();
-        return "Logiciel : " + d.name();
+        if (d instanceof OmxDecoder) return com.fk2play.Tr.s("Materiel : ", "Hardware: ") + ((OmxDecoder) d).info();
+        return com.fk2play.Tr.s("Logiciel : ", "Software: ") + d.name();
     }
 
     private static void rememberLast(VideoDecoder d) {
@@ -434,15 +437,16 @@ public class VideoPipeline {
         VideoDecoder d = current;
         StringBuilder b = new StringBuilder();
         if (d != null) {
-            b.append("En cours : ").append(describe(d));
-            if (lastUsed != null && !(d instanceof OmxDecoder)) b.append("\nAvant : ").append(lastUsed);
+            b.append(com.fk2play.Tr.s("En cours : ", "Current: ")).append(describe(d));
+            if (lastUsed != null && !(d instanceof OmxDecoder)) b.append(com.fk2play.Tr.s("\nAvant : ", "\nBefore: ")).append(lastUsed);
         } else if (lastUsed != null) {
             long s = (SystemClock.uptimeMillis() - lastUsedAt) / 1000;
-            b.append("Dernier utilise (il y a ").append(s < 60 ? s + " s" : (s / 60) + " min").append(") : ")
+            b.append(com.fk2play.Tr.s("Dernier utilise (il y a ", "Last used (")).append(s < 60 ? s + " s" : (s / 60) + " min")
+                    .append(com.fk2play.Tr.s(") : ", " ago): "))
                     .append(lastUsed);
-        } else b.append("aucun pour l'instant (afficher CarPlay une fois)");
-        if (!preferHardware) b.append("\nMateriel desactive dans les reglages");
-        else if (OmxDecoder.unavailableReason() != null) b.append("\nMateriel : ").append(OmxDecoder.unavailableReason());
+        } else b.append(com.fk2play.Tr.s("aucun pour l'instant (afficher CarPlay une fois)", "none yet (show CarPlay once)"));
+        if (!preferHardware) b.append(com.fk2play.Tr.s("\nMateriel desactive dans les reglages", "\nHardware disabled in the settings"));
+        else if (OmxDecoder.unavailableReason() != null) b.append(com.fk2play.Tr.s("\nMateriel : ", "\nHardware: ")).append(OmxDecoder.unavailableReason());
         return b.toString();
     }
 

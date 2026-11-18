@@ -74,7 +74,7 @@ public class FfmpegDecoder implements VideoDecoder {
 
     @Override
     public String name() {
-        return "FFmpeg (logiciel)";
+        return com.fk2play.Tr.s("FFmpeg (logiciel)", "FFmpeg (software)");
     }
 
     private static native long nativeInit(int width, int height, int threads, int format);

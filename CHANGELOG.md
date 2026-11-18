@@ -1,5 +1,16 @@
 # Historique des versions
 
+## 2.2 — 18 novembre 2026 (interface en anglais)
+
+- **FK2Play suit la langue de l'autoradio** : français si le Honda Connect est réglé en français,
+  **anglais** dans toutes les autres langues (réglages, messages d'état, diagnostic, test du micro,
+  notification). Les réglages passent par `res/values` (anglais) et `res/values-fr` (français) ;
+  les textes du code Java par `Tr.s(fr, en)`.
+- **Modes d'emploi en anglais** : `docs/en/User_guide_FK2Play_RC3.pdf` et
+  `docs/en/User_guide_FK2Play_all_versions.pdf` ; page « Nouveautés 2.2 » en tête des PDF français.
+- Aucun changement dans la vidéo, le son, les touches du volant ni le protocole du dongle.
+- *English*: FK2Play now follows the head unit language (French or English) and ships English user guides.
+
 ## 2.1 — 17 novembre 2026 (décodage vidéo matériel, version stable)
 
 - **Validée en voiture** (Civic Type R FK2, RC3) : `Materiel : OMX.Nvidia.h264.decode 800x480`,

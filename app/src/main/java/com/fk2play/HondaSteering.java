@@ -47,7 +47,7 @@ public final class HondaSteering {
             if (MediaKeys.commandFor(keyCode, false) != 0) {
                 // Piste suivante / precedente... : commande CarPlay (journal sur le thread principal).
                 main.post(new Runnable() {
-                    public void run() { MediaKeys.handle(ctx, keyCode, "volant Honda"); }
+                    public void run() { MediaKeys.handle(ctx, keyCode, Tr.s("volant Honda", "Honda wheel")); }
                 });
             } else {
                 // Volume (65532/65533) et autres : une fois inscrit, le Honda ne les traite plus
@@ -72,14 +72,14 @@ public final class HondaSteering {
     private final ServiceConnection conn = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder b) {
             service = ISteeringMenuService.Stub.asInterface(b);
-            setStatus("connecte (adresse " + address + ")");
+            setStatus(Tr.s("connecte (adresse ", "connected (address ") + address + ")");
             if (wanted) activate();
         }
 
         public void onServiceDisconnected(ComponentName name) {
             service = null;
             registered = false;
-            setStatus("deconnecte");
+            setStatus(Tr.s("deconnecte", "disconnected"));
         }
     };
 
@@ -93,17 +93,17 @@ public final class HondaSteering {
     private void giveBack(final int keyCode) {
         injector.execute(new Runnable() {
             public void run() {
-                String how = "rendue au Honda";
+                String how = Tr.s("rendue au Honda", "returned to Honda");
                 injecting = keyCode;
                 try {
                     // Interdit sur le thread principal : d'ou le thread dedie.
                     new android.app.Instrumentation().sendKeyDownUpSync(keyCode);
                 } catch (Throwable t) {
-                    how = "rendue impossible : " + t.getClass().getSimpleName();
+                    how = Tr.s("rendue impossible : ", "return failed: ") + t.getClass().getSimpleName();
                 } finally {
                     injecting = -1;
                 }
-                final String src = "volant Honda, " + how;
+                final String src = Tr.s("volant Honda, ", "Honda wheel, ") + how;
                 main.post(new Runnable() {
                     public void run() { MediaKeys.handle(ctx, keyCode, src); }
                 });
@@ -119,7 +119,7 @@ public final class HondaSteering {
         } catch (RuntimeException e) {
             bound = false;
         }
-        if (!bound) setStatus("introuvable (pas un Honda Connect ?)");
+        if (!bound) setStatus(Tr.s("introuvable (pas un Honda Connect ?)", "not found (not a Honda Connect?)"));
     }
 
     void unbind() {
@@ -217,10 +217,10 @@ public final class HondaSteering {
             if (!"C".equals(mode)) service.registerCallbackEx(callback, address);
             if (!"B".equals(mode)) notifyDisp(1);
             registered = true;
-            setStatus("connecte (adresse " + address + ", mode " + mode + ")");
+            setStatus(Tr.s("connecte (adresse ", "connected (address ") + address + ", mode " + mode + ")");
         } catch (Exception e) {
             registered = false;
-            setStatus("erreur d'inscription : " + e);
+            setStatus(Tr.s("erreur d'inscription : ", "registration error: ") + e);
         }
     }
 

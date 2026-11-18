@@ -60,7 +60,7 @@
         <activity
             android:name=".MicTestActivity"
             android:exported="false"
-            android:label="Test du micro"
+            android:label="@string/mic_test"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo" />
     </application>
